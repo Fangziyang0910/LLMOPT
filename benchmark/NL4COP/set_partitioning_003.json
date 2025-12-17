@@ -1,0 +1,62 @@
+{
+  "problem_id": "set_partitioning_003",
+  "metadata": {
+    "problem_type": "Set Partitioning Problem",
+    "difficulty": "hard"
+  },
+  "problem_description": "Within the advanced strategic operational framework of QuickLogistics' supply chain management division, a sophisticated network optimization paradigm requires the methodical establishment of an efficient delivery network to provide comprehensive coverage across 15 distinct commercial districts in the metropolitan area. The corporation has identified 40 potential distribution center locations, each possessing unique construction cost structures and center coverage capabilities. Due to logistics coordination requirements and quality control standards, each commercial district must be served by exactly one and only one distribution center to ensure clear accountability and eliminate service conflicts. The comprehensive cost analysis and center coverage assessment reveals the following operational parameters: Center 1 has costs of 288 thousand dollars and provides center coverage for districts 2,3,8,11; Center 2 has costs of 247 thousand dollars and provides center coverage for districts 1,6,9,10; Center 3 has costs of 282 thousand dollars and provides center coverage for districts 12,15; Center 4 has costs of 290 thousand dollars and provides center coverage for districts 4,14; Center 5 has costs of 272 thousand dollars and provides center coverage for districts 5,7; Center 6 has costs of 254 thousand dollars and provides center coverage for district 13; Center 7 has costs of 326 thousand dollars and provides center coverage for districts 2,9,15; Center 8 has costs of 345 thousand dollars and provides center coverage for districts 1,4,12,13; Center 9 has costs of 318 thousand dollars and provides center coverage for districts 7,11,13,15; Center 10 has costs of 354 thousand dollars and provides center coverage for districts 1,2,6,9,10,14; Center 11 has costs of 262 thousand dollars and provides center coverage for districts 2,4,10,15; Center 12 has costs of 325 thousand dollars and provides center coverage for districts 2,3,13; Center 13 has costs of 374 thousand dollars and provides center coverage for districts 2,5,8,10,13; Center 14 has costs of 344 thousand dollars and provides center coverage for districts 6,9,12,14; Center 15 has costs of 354 thousand dollars and provides center coverage for districts 2,7,8,9,13,14; Center 16 has costs of 409 thousand dollars and provides center coverage for districts 1,4,6,10,11,14; Center 17 has costs of 352 thousand dollars and provides center coverage for districts 4,5,9,10,14; Center 18 has costs of 271 thousand dollars and provides center coverage for district 5,6,14,15; Center 19 has costs of 331 thousand dollars and provides center coverage for districts 2,3,5,9,11; Center 20 has costs of 301 thousand dollars and provides center coverage for districts 1, 3, 6, 10, 11; Center 21 has costs of 269 thousand dollars and provides center coverage for districts 6, 7, 9, 15; Center 22 has costs of 292 thousand dollars and provides center coverage for districts 1,5,6,9,10; Center 23 has costs of 310 thousand dollars and provides center coverage for districts 1, 4, 11, 12, 13, 15; Center 24 has costs of 357 thousand dollars and provides center coverage for districts 3, 8, 10, 11; Center 25 has costs of 333 thousand dollars and provides center coverage for districts 1, 2, 7, 9, 10; Center 26 has costs of 352 thousand dollars and provides center coverage for districts 3, 11, 14, 15; Center 27 has costs of 264 thousand dollars and provides center coverage for districts 5, 6, 11, 12; Center 28 has costs of 329 thousand dollars and provides center coverage for districts 6, 11, 12, 15; Center 29 has costs of 302 thousand dollars and provides center coverage for districts 3, 4, 7, 8, 10; Center 30 has costs of 290 thousand dollars and provides center coverage for districts 2, 3, 4, 9; Center 31 has costs of 370 thousand dollars and provides center coverage for districts 6, 10, 11, 12, 13, 14; Center 32 has costs of 290 thousand dollars and provides center coverage for districts 1, 6, 12, 13; Center 33 has costs of 338 thousand dollars and provides center coverage for districts 5, 6, 8, 9, 15; Center 34 has costs of 250 thousand dollars and provides center coverage for districts 3, 5, 15; Center 35 has costs of 306 thousand dollars and provides center coverage for districts 6, 7, 10, 13, 14, 15; Center 36 has costs of 352 thousand dollars and provides center coverage for districts 2, 4, 10, 11, 13; Center 37 has costs of 340 thousand dollars and provides center coverage for districts 2, 5, 6, 14; Center 38 has costs of 325 thousand dollars and provides center coverage for districts 3, 8, 11, 12; Center 39 has costs of 386 thousand dollars and provides center coverage for districts 2, 9, 11, 12; Center 40 has costs of 245 thousand dollars and provides center coverage for districts 3, 5, 6. QuickLogistics' strategic optimization methodology seeks to determine the optimal center selection configuration that ensures each district receives exactly one and only one distribution center assignment while minimizing the total costs across all deployed centers.",  
+  "solution_format_description": "Print the following fields: - selected_centers: selection status for each center. - total_cost: total construction cost.",
+  "structured_data": {
+  "num_customers": 15,
+  "num_facilities": 40,
+  "installation_costs": [288, 247, 282, 290, 272, 254, 326, 345, 318, 354, 262, 325, 374, 344, 354, 409, 352, 271, 331, 301, 269, 292, 310, 357, 333, 352, 264, 329, 302, 290, 370, 290, 338, 250, 306, 352, 340, 325, 386, 245],
+  "center_coverage": [
+    [2, 3, 8, 11],
+    [1, 6, 9, 10],
+    [12, 15],
+    [4, 14],
+    [5, 7],
+    [13],
+    [2, 9, 15],
+    [1, 4, 12, 13],
+    [7, 11, 13, 15],
+    [1, 2, 6, 9, 10, 14],
+    [2, 4, 10, 15],
+    [2, 3, 13],
+    [2, 5, 8, 10, 13],
+    [6, 9, 12, 14],
+    [2, 7, 8, 9, 13, 14],
+    [1, 4, 6, 10, 11, 14],
+    [4, 5, 9, 10, 14],
+    [5, 6, 14, 15],
+    [2, 3, 5, 9, 11],
+    [1, 3, 6, 10, 11],
+    [6, 7, 9, 15],
+    [1, 5, 9, 10],
+    [1, 4, 11, 12, 13, 15],
+    [3, 8, 10, 11],
+    [1, 2, 7, 9, 10],
+    [3, 11, 14, 15],
+    [5, 6, 11, 12],
+    [6, 11, 12, 15],
+    [3, 4, 7, 8, 10],
+    [2, 3, 4, 9],
+    [6, 10, 11, 12, 13, 14],
+    [1, 6, 12, 13],
+    [5, 6, 8, 9, 15],
+    [3, 5, 15],
+    [6, 7, 10, 13, 14, 15],
+    [2, 4, 10, 11, 13],
+    [2, 5, 6, 14],
+    [3, 8, 11, 12],
+    [2, 9, 11, 12],
+    [3, 5, 6]
+    ]
+  },
+  "reference_solution": {
+    "selected_centers": [0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    "total_cost": 1535
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nnum_districts = 15\nnum_centers = 40\ncosts = [288, 247, 282, 290, 272, 254, 326, 345, 318, 354, 262, 325, 374, 344, 354, 409, 352, 271, 331, 301, 269, 292, 310, 357, 333, 352, 264, 329, 302, 290, 370, 290, 338, 250, 306, 352, 340, 325, 386, 245]\ncenter_coverage = [\n    [2, 3, 8, 11],\n    [1, 6, 9, 10],\n    [12, 15],\n    [4, 14],\n    [5, 7],\n    [13],\n    [2, 9, 15],\n    [1, 4, 12, 13],\n    [7, 11, 13, 15],\n    [1, 2, 6, 9, 10, 14],\n    [2, 4, 10, 15],\n    [2, 3, 13],\n    [2, 5, 8, 10, 13],\n    [6, 9, 12, 14],\n    [2, 7, 8, 9, 13, 14],\n    [1, 4, 6, 10, 11, 14],\n    [4, 5, 9, 10, 14],\n    [5, 6, 14, 15],\n    [2, 3, 5, 9, 11],\n    [1, 3, 6, 10, 11],\n    [6, 7, 9, 15],\n    [1, 5, 9, 10],\n    [1, 4, 11, 12, 13, 15],\n    [3, 8, 10, 11],\n    [1, 2, 7, 9, 10],\n    [3, 11, 14, 15],\n    [5, 6, 11, 12],\n    [6, 11, 12, 15],\n    [3, 4, 7, 8, 10],\n    [2, 3, 4, 9],\n    [6, 10, 11, 12, 13, 14],\n    [1, 6, 12, 13],\n    [5, 6, 8, 9, 15],\n    [3, 5, 15],\n    [6, 7, 10, 13, 14, 15],\n    [2, 4, 10, 11, 13],\n    [2, 5, 6, 14],\n    [3, 8, 11, 12],\n    [2, 9, 11, 12],\n    [3, 5, 6]\n]\n\nmodel = Model()\n\nx = boolvar(shape=num_centers, name=\"x\")\n\nfor district in range(1, num_districts + 1): \n    covering_centers = [j for j in range(num_centers) if district in center_coverage[j]]\n    model += sum(x[j] for j in covering_centers) == 1\n\ntotal_cost = sum(costs[j] * x[j] for j in range(num_centers))\nmodel.minimize(total_cost)\n\nif model.solve():\n    selected_centers_binary = [int(x[j].value()) for j in range(num_centers)]\n    total_cost_value = sum(costs[j] for j in range(num_centers) if x[j].value())\n    \n    result = {\n        \"selected_centers\": selected_centers_binary,\n        \"total_cost\": total_cost_value\n    }\n    \n    print(json.dumps(result))\nelse:\n    print(json.dumps({\"error\": \"No solution found\"}))",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_centers\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected_centers = solution[\"selected_centers\"]\n        total_cost = solution[\"total_cost\"]\n        \n        num_customers = structured_data[\"num_customers\"]\n        num_facilities = structured_data[\"num_facilities\"]\n        costs = structured_data[\"installation_costs\"]\n        center_coverage = structured_data[\"center_coverage\"]\n        errors = []\n        \n        if len(selected_centers) != num_facilities:\n            errors.append(f\"selected_centers length mismatch: expected {num_facilities}, got {len(selected_centers)}\")\n        \n        for i, val in enumerate(selected_centers):\n            if val not in [0, 1]:\n                errors.append(f\"Center {i+1}: invalid binary value {val}, must be 0 or 1\")\n        \n        if len(errors) > 0:\n            return {\"is_valid\": False, \"validation_errors\": errors, \"optimality_score\": 0.0}\n        \n        district_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O']\n        for district in range(1, num_customers + 1):\n            covering_count = 0\n            for j in range(num_facilities):\n                if selected_centers[j] == 1 and district in center_coverage[j]:\n                    covering_count += 1\n            if covering_count != 1:\n                district_name = district_names[district-1] if district <= len(district_names) else f\"District {district}\"\n                errors.append(f\"{district_name} covered {covering_count} times, expected exactly 1\")\n        \n        calculated_cost = sum(costs[j] for j in range(num_facilities) if selected_centers[j] == 1)\n        if abs(calculated_cost - total_cost) > 1e-6:\n            errors.append(f\"Cost inconsistency: calculated {calculated_cost}k, declared {total_cost}k\")\n        \n        is_valid = len(errors) == 0\n        if is_valid:\n            optimal_cost = reference_solution[\"total_cost\"]\n            if optimal_cost == 0:\n                optimality_score = 1.0 if total_cost == 0 else 0.0\n            else:\n                gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": is_valid,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

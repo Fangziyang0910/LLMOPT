@@ -1,0 +1,52 @@
+{
+  "problem_id": "capacitated_warehouse_location_003",
+  "metadata": {
+    "problem_type": "Capacitated Warehouse Location Problem",
+    "difficulty": "hard"
+  },
+    "problem_description": "A beverage distributor is planning its network of regional depots to serve retail outlets across the city. They have shortlisted 6 potential locations for these depots, each with a specific annual handling capacity (in thousands of liters) and a fixed annual cost (in thousands of dollars) for leasing and operating the facility. The distributor has contracts with 14 major retail chains, each with a known annual demand (in thousands of liters). The cost of transporting beverages (in dollars per thousand liters) varies based on distance and road conditions between each depot location and each retail chain. The distributor needs to decide which depots to open and how to allocate the annual demand of the retail chains among these open depots. Their objective is to minimize the total annual cost, which includes both the fixed operating costs of the open depots and the transportation costs. It is mandatory that each retail chain's total annual demand is fully met, and the aggregate demand allocated to any depot does not surpass its annual handling capacity.\n\nPotential depot locations:\n1. Location 1: Capacity 173 thousand liters, Fixed cost 5210 thousand dollars\n2. Location 2: Capacity 215 thousand liters, Fixed cost 6850 thousand dollars\n3. Location 3: Capacity 162 thousand liters, Fixed cost 5980 thousand dollars\n4. Location 4: Capacity 134 thousand liters, Fixed cost 4720 thousand dollars\n5. Location 5: Capacity 238 thousand liters, Fixed cost 7910 thousand dollars\n6. Location 6: Capacity 197 thousand liters, Fixed cost 6430 thousand dollars\n\nRetail chain demands and transportation costs (chain's annual demand in thousand liters, followed by transportation cost per thousand liters from each location in dollars):\n1. Chain 1: 48 thousand liters, Costs [13, 16, 19, 11, 15, 18]\n2. Chain 2: 63 thousand liters, Costs [9, 13, 11, 17, 10, 14]\n3. Chain 3: 39 thousand liters, Costs [16, 11, 13, 15, 12, 17]\n4. Chain 4: 52 thousand liters, Costs [11, 9, 16, 13, 14, 12]\n5. Chain 5: 43 thousand liters, Costs [15, 17, 10, 12, 16, 13]\n6. Chain 6: 58 thousand liters, Costs [12, 14, 15, 10, 13, 11]\n7. Chain 7: 32 thousand liters, Costs [17, 15, 12, 14, 11, 16]\n8. Chain 8: 68 thousand liters, Costs [10, 12, 14, 16, 9, 13]\n9. Chain 9: 27 thousand liters, Costs [14, 16, 11, 13, 15, 10]\n10. Chain 10: 73 thousand liters, Costs [11, 15, 17, 9, 13, 14]\n11. Chain 11: 55 thousand liters, Costs [16, 10, 12, 18, 11, 15]\n12. Chain 12: 41 thousand liters, Costs [12, 18, 14, 10, 17, 9]\n13. Chain 13: 66 thousand liters, Costs [13, 11, 19, 15, 12, 16]\n14. Chain 14: 36 thousand liters, Costs [18, 14, 10, 16, 13, 11]",
+    "solution_format_description": "Print the following fields: - total_cost: total cost including setup and transportation. - depots_open: which depots are open. - allocation: how much each retail chain receives from each depot.",
+    "structured_data": {
+    "warehouse_capacities": [173, 215, 162, 134, 238, 197],
+    "warehouse_setup_costs": [5210, 6850, 5980, 4720, 7910, 6430],
+    "store_demands": [48, 63, 39, 52, 43, 58, 32, 68, 27, 73, 55, 41, 66, 36],
+    "transportation_costs": [
+        [13, 16, 19, 11, 15, 18],
+        [9, 13, 11, 17, 10, 14],
+        [16, 11, 13, 15, 12, 17],
+        [11, 9, 16, 13, 14, 12],
+        [15, 17, 10, 12, 16, 13],
+        [12, 14, 15, 10, 13, 11],
+        [17, 15, 12, 14, 11, 16],
+        [10, 12, 14, 16, 9, 13],
+        [14, 16, 11, 13, 15, 10],
+        [11, 15, 17, 9, 13, 14],
+        [16, 10, 12, 18, 11, 15],
+        [12, 18, 14, 10, 17, 9],
+        [13, 11, 19, 15, 12, 16],
+        [18, 14, 10, 16, 13, 11]
+    ]
+},
+  "reference_solution": {
+    "total_cost": 23217,
+     "depots_open": [1, 1, 0, 1, 0, 1],
+     "allocation": [
+        [0, 0, 0, 48, 0, 0],
+        [63, 0, 0, 0, 0, 0],
+        [0, 39, 0, 0, 0, 0],
+        [0, 52, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 43],
+        [0, 0, 0, 8, 0, 50],
+        [0, 3, 0, 29, 0, 0],
+        [68, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 27],
+        [24, 0, 0, 49, 0, 0],
+        [0, 55, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 41],
+        [0, 66, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 36]
+      ]
+    },
+  "solver_code": "from cpmpy import *\nimport json\n\nwarehouse_capacities = [173, 215, 162, 134, 238, 197]\nwarehouse_setup_costs = [5210, 6850, 5980, 4720, 7910, 6430]\nstore_demands = [48, 63, 39, 52, 43, 58, 32, 68, 27, 73, 55, 41, 66, 36]\ntransportation_costs = [\n    [13, 16, 19, 11, 15, 18],\n    [9, 13, 11, 17, 10, 14],\n    [16, 11, 13, 15, 12, 17],\n    [11, 9, 16, 13, 14, 12],\n    [15, 17, 10, 12, 16, 13],\n    [12, 14, 15, 10, 13, 11],\n    [17, 15, 12, 14, 11, 16],\n    [10, 12, 14, 16, 9, 13],\n    [14, 16, 11, 13, 15, 10],\n    [11, 15, 17, 9, 13, 14],\n    [16, 10, 12, 18, 11, 15],\n    [12, 18, 14, 10, 17, 9],\n    [13, 11, 19, 15, 12, 16],\n    [18, 14, 10, 16, 13, 11]\n]\n\nm = len(warehouse_capacities)\nn = len(store_demands)\n\ncapacities = warehouse_capacities\nfixed_costs = warehouse_setup_costs\ndemands = store_demands\ncosts = transportation_costs\n\nmodel = Model()\n\ndepots_open = boolvar(shape=m)\nallocation = intvar(0, max(demands), shape=(n, m))\n\nfor j in range(n):\n    model += sum(allocation[j]) == demands[j]\n\nfor j in range(n):\n    for i in range(m):\n        model += allocation[j, i] <= demands[j] * depots_open[i]\n\nfor i in range(m):\n    model += sum(allocation[j, i] for j in range(n)) <= capacities[i] * depots_open[i]\n\ntotal_cost = sum(fixed_costs[i] * depots_open[i] for i in range(m))\ntotal_cost += sum(allocation[j, i] * costs[j][i] for j in range(n) for i in range(m)) // 1000\n\nmodel.minimize(total_cost)\n\nif model.solve():\n    result = {\n        \"total_cost\": total_cost.value(),\n        \"depots_open\": [int(depots_open[i].value()) for i in range(m)],\n        \"allocation\": [[int(allocation[j, i].value()) for i in range(m)] for j in range(n)]\n    }\n    print(json.dumps(result))\nelse:\n    print(\"No solution found\")",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"total_cost\", \"depots_open\", \"allocation\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        total_cost = solution[\"total_cost\"]\n        depots_open = solution[\"depots_open\"]\n        allocation = solution[\"allocation\"]\n        depots = structured_data[\"depots\"]\n        retail_chains = structured_data[\"retail_chains\"]\n        errors = []\n        \n        m = len(depots)\n        n = len(retail_chains)\n        \n        if len(depots_open) != m:\n            errors.append(f\"depots_open length mismatch: expected {m}, got {len(depots_open)}\")\n        \n        if len(allocation) != n:\n            errors.append(f\"allocation length mismatch: expected {n}, got {len(allocation)}\")\n        \n        for i in range(n):\n            if len(allocation[i]) != m:\n                errors.append(f\"allocation[{i}] length mismatch: expected {m}, got {len(allocation[i])}\")\n        \n        for i in range(m):\n            if depots_open[i] not in [0, 1]:\n                errors.append(f\"depots_open[{i}] must be 0 or 1, got {depots_open[i]}\")\n        \n        calculated_total_cost = 0\n        \n        for i in range(m):\n            if depots_open[i] == 1:\n                calculated_total_cost += depots[i][\"annual_cost\"]\n        \n        for j in range(n):\n            chain_demand = retail_chains[j][\"annual_demand\"]\n            allocated_amount = sum(allocation[j])\n            \n            if abs(allocated_amount - chain_demand) > 1e-6:\n                errors.append(f\"Retail chain {j} demand violation: allocated {allocated_amount}, required {chain_demand}\")\n            \n            for i in range(m):\n                alloc = allocation[j][i]\n                \n                if alloc < 0:\n                    errors.append(f\"Negative allocation: chain {j}, depot {i}: {alloc}\")\n                \n                if alloc > 0 and depots_open[i] != 1:\n                    errors.append(f\"Allocation to closed depot: chain {j}, depot {i}: {alloc}\")\n                \n                calculated_total_cost += alloc * retail_chains[j][\"transport_costs\"][i]\n        \n        for i in range(m):\n            total_allocated = sum(allocation[j][i] for j in range(n))\n            if depots_open[i] == 1 and total_allocated > depots[i][\"handling_capacity\"] + 1e-6:\n                excess = total_allocated - depots[i][\"handling_capacity\"]\n                errors.append(f\"Depot {i} capacity exceeded by {excess}\")\n        \n        if abs(calculated_total_cost - total_cost) > 1e-6:\n            errors.append(f\"Cost inconsistency: calculated {calculated_total_cost}, declared {total_cost}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_cost = reference_solution[\"total_cost\"]\n            if optimal_cost == 0:\n                optimality_score = 1.0 if total_cost == 0 else 0.0\n            else:\n                gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

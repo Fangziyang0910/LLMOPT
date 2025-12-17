@@ -1,0 +1,35 @@
+{
+  "problem_id": "minimum_vertex_cover_001",
+  "metadata": {
+    "problem_type": "Minimum Vertex Cover Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A city's transportation department needs to install surveillance cameras at key intersections to monitor all road segments in a small district. The district has 10 major intersections numbered 0 through 9. The road network consists of 15 road segments connecting these intersections: road segment from intersection 0 to 1, road segment from intersection 0 to 2, road segment from intersection 0 to 3, road segment from intersection 1 to 4, road segment from intersection 1 to 5, road segment from intersection 2 to 6, road segment from intersection 2 to 7, road segment from intersection 3 to 8, road segment from intersection 3 to 9, road segment from intersection 4 to 5, road segment from intersection 6 to 7, road segment from intersection 8 to 9, road segment from intersection 4 to 6, road segment from intersection 5 to 8, and road segment from intersection 7 to 9. Each camera placed at an intersection can monitor all road segments connected to that intersection. A road segment is considered covered if at least one of its two endpoint intersections has a camera installed. The transportation department wants to determine which intersections should have cameras installed to minimize the total number of cameras while ensuring complete coverage of all road segments.",
+  "solution_format_description": "Print the following fields: - selected_intersections: intersections where cameras should be installed. - num_cameras: total number of cameras.",
+  "structured_data": {
+    "num_intersections": 10,
+    "roads": [
+      [0, 1],
+      [0, 2],
+      [0, 3],
+      [1, 4],
+      [1, 5],
+      [2, 6],
+      [2, 7],
+      [3, 8],
+      [3, 9],
+      [4, 5],
+      [6, 7],
+      [8, 9],
+      [4, 6],
+      [5, 8],
+      [7, 9]
+    ]
+  },
+  "reference_solution": {
+    "selected_intersections": [1, 2, 3, 4, 7, 8],
+    "num_cameras": 6
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nnum_intersections = 10\nroads = [\n    [0, 1], [0, 2], [0, 3], [1, 4], [1, 5],\n    [2, 6], [2, 7], [3, 8], [3, 9], [4, 5],\n    [6, 7], [8, 9], [4, 6], [5, 8], [7, 9]\n]\n\ncameras = boolvar(shape=num_intersections)\n\nmodel = Model()\n\nfor road in roads:\n    u, v = road\n    model += cameras[u] | cameras[v]\n\nmodel.minimize(sum(cameras))\n\nif model.solve():\n    selected_intersections = [i for i in range(num_intersections) if cameras[i].value()]\n    result = {\n        \"selected_intersections\": selected_intersections,\n        \"num_cameras\": len(selected_intersections)\n    }\n    print(json.dumps(result))\nelse:\n    print(\"No solution found\")",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_intersections\", \"num_cameras\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected = solution[\"selected_intersections\"]\n        num_cameras = solution[\"num_cameras\"]\n        roads = structured_data[\"roads\"]\n        num_intersections = structured_data[\"num_intersections\"]\n        errors = []\n        \n        if not isinstance(selected, list):\n            errors.append(\"selected_intersections must be an array\")\n        \n        if len(selected) != num_cameras:\n            errors.append(f\"Array length mismatch: expected {num_cameras}, got {len(selected)}\")\n        \n        for idx in selected:\n            if not isinstance(idx, int) or idx < 0 or idx >= num_intersections:\n                errors.append(f\"Invalid intersection index: {idx}\")\n        \n        uncovered_roads = []\n        for i, road in enumerate(roads):\n            u, v = road\n            if u not in selected and v not in selected:\n                uncovered_roads.append(road)\n        \n        if uncovered_roads:\n            errors.append(f\"Uncovered road segments: {uncovered_roads}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_cameras = reference_solution[\"num_cameras\"]\n            if optimal_cameras == 0:\n                optimality_score = 1.0 if num_cameras == 0 else 0.0\n            else:\n                gap = abs(optimal_cameras - num_cameras) / abs(optimal_cameras)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

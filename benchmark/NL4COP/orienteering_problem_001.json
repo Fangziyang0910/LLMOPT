@@ -1,0 +1,32 @@
+{
+  "problem_id": "orienteering_problem_001",
+  "metadata": {
+    "problem_type": "Orienteering Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "Sarah is planning a scenic tour through a city park, but due to her limited time and energy, this tour can only cover a distance of 2.5 kilometers. She must start at the park entrance located at (0, 0) and finish at the observation deck located at (1.0, 1.0), with all coordinates measured in kilometers. While any two locations can be reached by walking directly in a straight line, each attraction can be visited at most once, and Sarah needs to determine which attractions to include in her route to maximize her sightseeing experience. The park entrance and observation deck have no meaningful value, while the following attractions have their coordinates and meaningful values: 1. Rose Garden at (0.2, 0.3) worth 10 meaningful value; 2. Duck Pond at (0.5, 0.1) worth 15 meaningful value; 3. Art Installation at (0.8, 0.4) worth 20 meaningful value; 4. Cafe Terrace at (0.6, 0.7) worth 12 meaningful value; 5. Music Pavilion at (0.3, 0.6) worth 18 meaningful value; 6. Children's Playground at (0.1, 0.8) worth 8 meaningful value; 7. Botanical Garden at (0.7, 0.2) worth 14 meaningful value; 8. Meditation Area at (0.4, 0.5) worth 16 meaningful value.",
+  "solution_format_description": "Print the following fields: - path: sequence of locations visited from start to end. - visited_attractions: visitation status for each attraction. - total_meaningful_value: total sightseeing value. - total_distance: total walking distance.",
+  "structured_data": {
+    "attractions": [
+      [0.0, 0.0, 0],
+      [0.2, 0.3, 10],
+      [0.5, 0.1, 15],
+      [0.8, 0.4, 20],
+      [0.6, 0.7, 12],
+      [0.3, 0.6, 18],
+      [0.1, 0.8, 8],
+      [0.7, 0.2, 14],
+      [0.4, 0.5, 16],
+      [1.0, 1.0, 0]
+    ],
+    "distance_budget": 2.5
+  },
+  "reference_solution": {
+    "path": [0, 2, 7, 3, 5, 8, 4, 9],
+    "visited_attractions": [1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+    "total_meaningful_value": 95,
+    "total_distance": 2.42
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    import math\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"path\", \"visited_attractions\", \"total_meaningful_value\", \"total_distance\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        path = solution[\"path\"]\n        visited_attractions = solution[\"visited_attractions\"]\n        total_value = solution[\"total_meaningful_value\"]\n        total_distance = solution[\"total_distance\"]\n        attractions = structured_data[\"attractions\"]\n        distance_budget = structured_data[\"distance_budget\"]\n        n = len(attractions)\n        \n        errors = []\n        \n        if len(visited_attractions) != n:\n            errors.append(f\"Array length mismatch: expected {n}, got {len(visited_attractions)}\")\n        \n        if total_distance > distance_budget + 1e-6:\n            errors.append(f\"Distance constraint violated: {total_distance} > {distance_budget}\")\n        \n        if not path:\n            errors.append(\"Path cannot be empty\")\n        elif path[0] != 0:\n            errors.append(f\"Path must start at entrance (0), got {path[0]}\")\n        elif path[-1] != n - 1:\n            errors.append(f\"Path must end at observation deck ({n-1}), got {path[-1]}\")\n        \n        if len(path) != len(set(path)):\n            errors.append(\"Path contains duplicate nodes\")\n        \n        path_visited = [0] * n\n        for node in path:\n            if 0 <= node < n:\n                path_visited[node] = 1\n        \n        for i in range(n):\n            if visited_attractions[i] != path_visited[i]:\n                errors.append(f\"visited_attractions mismatch at index {i}: array={visited_attractions[i]}, path={path_visited[i]}\")\n        \n        actual_distance = 0\n        actual_value = 0\n        \n        for i in range(len(path) - 1):\n            curr, next_node = path[i], path[i + 1]\n            if curr < 0 or curr >= n or next_node < 0 or next_node >= n:\n                errors.append(f\"Invalid node in path: {curr} -> {next_node}\")\n                continue\n            dx = attractions[curr][0] - attractions[next_node][0]\n            dy = attractions[curr][1] - attractions[next_node][1]\n            actual_distance += math.sqrt(dx*dx + dy*dy)\n        \n        for node in path:\n            if 0 <= node < n:\n                actual_value += attractions[node][2]\n        \n        if abs(actual_distance - total_distance) > 0.01:\n            errors.append(f\"Distance inconsistency: calculated {actual_distance:.6f}, declared {total_distance:.6f}\")\n        \n        if actual_value != total_value:\n            errors.append(f\"Value inconsistency: calculated {actual_value}, declared {total_value}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_value = reference_solution[\"total_meaningful_value\"]\n            if optimal_value == 0:\n                optimality_score = 1.0 if total_value == 0 else 0.0\n            else:\n                gap = abs(optimal_value - total_value) / abs(optimal_value)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

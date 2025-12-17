@@ -1,0 +1,46 @@
+{
+  "problem_id": "mixed_chinese_postman_002",
+  "metadata": {
+    "problem_type": "Mixed Chinese Postman Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A metropolitan transportation authority needs to design an optimal snow removal route for a complex urban network with 14 key intersections covering downtown and surrounding districts. There are 26 street segments that require snow clearing, each with specific clearing and travel times. The clearing requirements are: 1. One-way street from intersection 0 to 7: 12 minutes clearing time, 3 minutes travel time 2. One-way street from intersection 1 to 11: 13 minutes clearing time, 4 minutes travel time 3. Two-way street between intersections 2 and 7: 8 minutes clearing time (total), 2 minutes travel time in either direction 4. One-way street from intersection 2 to 8: 7 minutes clearing time, 2 minutes travel time 5. One-way street from intersection 2 to 12: 6 minutes clearing time, 2 minutes travel time 6. One-way street from intersection 3 to 13: 8 minutes clearing time, 3 minutes travel time 7. Two-way street between intersections 3 and 9: 11 minutes clearing time (total), 4 minutes travel time in either direction 8. Two-way street between intersections 4 and 10: 8 minutes clearing time (total), 2 minutes travel time in either direction 9. One-way street from intersection 4 to 12: 11 minutes clearing time, 3 minutes travel time 10. Two-way street between intersections 4 and 13: 6 minutes clearing time (total), 2 minutes travel time in either direction 11. Two-way street between intersections 5 and 11: 9 minutes clearing time (total), 3 minutes travel time in either direction 12. Two-way street between intersections 5 and 9: 5 minutes clearing time (total), 1 minute travel time in either direction 13. Two-way street between intersections 5 and 12: 9 minutes clearing time (total), 3 minutes travel time in either direction 14. One-way street from intersection 6 to 10: 7 minutes clearing time, 2 minutes travel time 15. Two-way street between intersections 6 and 11: 4 minutes clearing time (total), 1 minute travel time in either direction 16. One-way street between intersections 8 and 10: 9 minutes clearing time, 3 minutes travel time 17. Two-way street between intersections 8 and 13: 5 minutes clearing time (total), 2 minutes travel time in either direction 18. One-way street between intersections 9 and 13: 8 minutes clearing time, 2 minutes travel time 19. One-way street between intersections 9 and 12: 7 minutes clearing time, 2 minutes travel time 20. Two-way street between intersections 9 and 11: 10 minutes clearing time (total), 3 minutes travel time in either direction 21. Two-way street between intersections 10 and 0: 10 minutes clearing time (total), 3 minutes travel time in either direction 22. Two-way street between intersections 10 and 1: 11 minutes clearing time (total), 4 minutes travel time in either direction 23. One-way street from intersection 0 to 1: 8 minutes clearing time, 3 minutes travel time 24. One-way street from intersection 12 to 2: 6 minutes clearing time, 2 minutes travel time 25. Two-way street between intersections 13 and 3: 12 minutes clearing time (total), 4 minutes travel time in either direction 26. One-way street between intersections 13 and 1: 6 minutes clearing time, 2 minutes travel time. Important rules: For one-way streets, clearing must be done in the specified direction. For two-way streets, clearing can be completed in either direction (only one direction needs clearing). When a street segment is traversed for the first time in the clearing direction, both clearing time and travel time are incurred. Subsequent traversals of the same street segment incur only travel time. The snow removal route must start and end at the depot intersection 0 and ensure all 26 street segments are cleared once. Streets can be traversed multiple times if needed for route connectivity. How should the snow removal team plan the route to complete all clearing tasks in the minimum total time?",
+  "solution_format_description": "Print the following fields: - route: sequence of intersections visited. - total_time: total clearing and travel time.",
+  "structured_data": {
+    "num_intersections": 14,
+    "street_segments": [
+        [0, 7, 12, 3, 0],
+        [1, 11, 13, 4, 0],
+        [2, 7, 8, 2, 1],
+        [2, 8, 7, 2, 0],
+        [2, 12, 6, 2, 0],
+        [3, 13, 8, 3, 0],
+        [3, 9, 11, 4, 1],
+        [4, 10, 8, 2, 1],
+        [4, 12, 11, 3, 0],
+        [4, 13, 6, 2, 1],
+        [5, 11, 9, 3, 1],
+        [5, 9, 5, 1, 1],
+        [5, 12, 9, 3, 1],
+        [6, 10, 7, 2, 0],
+        [6, 11, 4, 1, 1],
+        [8, 10, 9, 3, 0],
+        [8, 13, 5, 2, 1],
+        [9, 13, 8, 2, 0],
+        [9, 12, 7, 2, 0],
+        [9, 11, 10, 3, 1],
+        [10, 0, 10, 3, 1],
+        [10, 1, 11, 4, 1],
+        [0, 1, 8, 3, 0],
+        [12, 2, 6, 2, 0],
+        [13, 3, 12, 4, 1],
+        [13, 1, 6, 2, 0]
+    ]
+},
+  "reference_solution": {
+    "route": [0, 7, 2, 8, 10, 4, 12, 5, 11, 6, 10, 0, 1, 11, 9, 5, 9, 13, 4, 13, 3, 13, 3, 9, 12, 2, 12, 2, 8, 13, 1, 10, 0],
+    "total_time": 297
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"route\", \"total_time\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        route = solution[\"route\"]\n        total_time = solution[\"total_time\"]\n        street_segments = structured_data[\"street_segments\"]\n        errors = []\n        \n        if not route or route[0] != 0 or route[-1] != 0:\n            errors.append(\"Route must start and end at depot intersection 0\")\n        \n        def is_connected(u, v):\n            for segment in street_segments:\n                su, sv, _, _, bidirectional = segment\n                if bidirectional == 0:\n                    if su == u and sv == v:\n                        return True\n                else:\n                    if (su == u and sv == v) or (su == v and sv == u):\n                        return True\n            return False\n        \n        for i in range(len(route) - 1):\n            u, v = route[i], route[i + 1]\n            if not is_connected(u, v):\n                errors.append(f\"Invalid path segment: {u} -> {v} (no direct connection)\")\n        \n        covered_segments = set()\n        \n        for i in range(len(route) - 1):\n            u, v = route[i], route[i + 1]\n            \n            for idx, segment in enumerate(street_segments):\n                su, sv, _, _, bidirectional = segment\n                \n                if bidirectional == 0:\n                    if su == u and sv == v:\n                        covered_segments.add(idx)\n                        break\n                else:\n                    if (su == u and sv == v) or (su == v and sv == u):\n                        covered_segments.add(idx)\n                        break\n        \n        if len(covered_segments) < len(street_segments):\n            missing_segments = set(range(len(street_segments))) - covered_segments\n            errors.append(f\"Missing street segments: {sorted(missing_segments)}\")\n        \n        if len(errors) == 0:\n            optimal_time = reference_solution[\"total_time\"]\n            if optimal_time == 0:\n                optimality_score = 1.0 if total_time == 0 else 0.0\n            else:\n                gap = abs(optimal_time - total_time) / abs(optimal_time)\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

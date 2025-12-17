@@ -1,0 +1,50 @@
+{
+  "problem_id": "set_partitioning_002",
+  "metadata": {
+    "problem_type": "Set Partitioning Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "Within the advanced strategic operational framework of TeleCorp's telecommunications infrastructure division, a sophisticated network deployment optimization paradigm requires the methodical allocation of cellular base stations to provide comprehensive coverage across 10 distinct urban districts in the most cost-effective manner. The corporation has identified 28 potential base station locations, each possessing unique construction cost structures and station coverage capabilities. The comprehensive cost analysis and station coverage assessment reveals the following operational parameters: Station 1 has costs of $254M and provides station coverage for districts A,D,E; Station 2 has costs of $220M and provides station coverage for districts D,J; Station 3 has costs of $212M and provides station coverage for districts D,I; Station 4 has costs of $207M and provides station coverage for districts I,J; Station 5 has costs of $170M and provides station coverage for district B; Station 6 has costs of $174M and provides station coverage for district H; Station 7 has costs of $172M and provides station coverage for districts F,I; Station 8 has costs of $288M and provides station coverage for districts B,E; Station 9 has costs of $197M and provides station coverage for districts G,H,J; Station 10 has costs of $161M and provides station coverage for district B; Station 11 has costs of $209M and provides station coverage for districts H,I; Station 12 has costs of $239M and provides station coverage for district I; Station 13 has costs of $120M and provides station coverage for districts I,J; Station 14 has costs of $333M and provides station coverage for districts D,F,H; Station 15 has costs of $200M and provides station coverage for districts G,J; Station 16 has costs of $249M and provides station coverage for district I; Station 17 has costs of $217M and provides station coverage for district E; Station 18 has costs of $206M and provides station coverage for districts F,J; Station 19 has costs of $264M and provides station coverage for districts D,G; Station 20 has costs of $300M and provides station coverage for districts E,J; Station 21 has costs of $126M and provides station coverage for district F; Station 22 has costs of $138M and provides station coverage for district C; Station 23 has costs of $258M and provides station coverage for districts F,H; Station 24 has costs of $370M and provides station coverage for districts A,B,C,J; Station 25 has costs of $189M and provides station coverage for districts H,I; Station 26 has costs of $171M and provides station coverage for districts G,H,J; Station 27 has costs of $236M and provides station coverage for districts F,I; Station 28 has costs of $136M and provides station coverage for district D. TeleCorp's strategic optimization methodology seeks to determine the optimal station selection configuration that ensures each district receives exactly one and only one base station assignment while minimizing the total costs across all deployed stations.",  
+  "solution_format_description": "Print the following fields: - selected_stations: selection status for each station. - total_cost: total construction cost.",
+  "structured_data": {
+    "num_districts": 10,
+    "num_stations": 28,
+    "costs": [254, 220, 212, 207, 170, 174, 172, 288, 197, 161, 209, 239, 120, 333, 200, 249, 217, 206, 264, 300, 126, 138, 258, 370, 189, 171, 236, 136],
+    "station_coverage": [
+      [1, 4, 5], 
+      [4, 10], 
+      [4, 9], 
+      [9, 10], 
+      [2], 
+      [8], 
+      [6, 9], 
+      [2, 5], 
+      [7, 8, 10], 
+      [2], 
+      [8, 9], 
+      [9], 
+      [9, 10], 
+      [4, 6, 8], 
+      [7, 10], 
+      [9], 
+      [5], 
+      [6, 10], 
+      [4, 7], 
+      [5, 10], 
+      [6], 
+      [3], 
+      [6, 8], 
+      [1, 2, 3, 10], 
+      [8, 9], 
+      [7, 8, 10], 
+      [6, 9], 
+      [4]
+    ]
+  },
+  "reference_solution": {
+    "selected_stations": [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    "total_cost": 896
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\n\nnum_districts = 10\nnum_stations = 28\ncosts = [254, 220, 212, 207, 170, 174, 172, 288, 197, 161, 209, 239, 120, 333, 200, 249, 217, 206, 264, 300, 126, 138, 258, 370, 189, 171, 236, 136]\nstation_coverage = [\n    [1, 4, 5], [4, 10], [4, 9], [9, 10], [2], [8], [6, 9], [2, 5], [7, 8, 10], [2],\n    [8, 9], [9], [9, 10], [4, 6, 8], [7, 10], [9], [5], [6, 10], [4, 7], [5, 10],\n    [6], [3], [6, 8], [1, 2, 3, 10], [8, 9], [7, 8, 10], [6, 9], [4]\n]\n\n\nmodel = Model()\n\n\nx = boolvar(shape=num_stations, name=\"x\")\n\n\nfor district in range(1, num_districts + 1):\n\n    covering_stations = [j for j in range(num_stations) if district in station_coverage[j]]\n\n    model += sum(x[j] for j in covering_stations) == 1\n\n\ntotal_cost = sum(costs[j] * x[j] for j in range(num_stations))\nmodel.minimize(total_cost)\n\n\nif model.solve():\n\n    selected_stations_binary = [int(x[j].value()) for j in range(num_stations)]\n    total_cost_value = sum(costs[j] for j in range(num_stations) if x[j].value())\n    \n\n    result = {\n        \"selected_stations\": selected_stations_binary,\n        \"total_cost\": total_cost_value\n    }\n    \n\n    print(json.dumps(result))\nelse:\n    print(json.dumps({\"error\": \"No solution found\"}))",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n\n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n\n    required_fields = [\"selected_stations\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n\n    try:\n        selected_stations = solution[\"selected_stations\"]\n        total_cost = solution[\"total_cost\"]\n        \n        num_districts = structured_data[\"num_districts\"]\n        num_stations = structured_data[\"num_stations\"]\n        costs = structured_data[\"costs\"]\n        station_coverage = structured_data[\"station_coverage\"]\n        errors = []\n        \n\n        if len(selected_stations) != num_stations:\n            errors.append(f\"selected_stations length mismatch: expected {num_stations}, got {len(selected_stations)}\")\n        \n\n        for i, val in enumerate(selected_stations):\n            if val not in [0, 1]:\n                errors.append(f\"Station {i+1}: invalid binary value {val}, must be 0 or 1\")\n        \n\n        if len(errors) > 0:\n            return {\"is_valid\": False, \"validation_errors\": errors, \"optimality_score\": 0.0}\n        \n\n        for district in range(1, num_districts + 1):\n            covering_count = 0\n            for j in range(num_stations):\n                if selected_stations[j] == 1 and district in station_coverage[j]:\n                    covering_count += 1\n            if covering_count != 1:\n                errors.append(f\"District {chr(ord('A') + district - 1)} covered {covering_count} times, expected exactly 1\")\n        \n\n        calculated_cost = sum(costs[j] for j in range(num_stations) if selected_stations[j] == 1)\n        if abs(calculated_cost - total_cost) > 1e-6:\n            errors.append(f\"Cost inconsistency: calculated {calculated_cost}, declared {total_cost}\")\n        \n\n        is_valid = len(errors) == 0\n        if is_valid:\n            optimal_cost = reference_solution[\"total_cost\"]\n            if optimal_cost == 0:\n                optimality_score = 1.0 if total_cost == 0 else 0.0\n            else:\n                gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": is_valid,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

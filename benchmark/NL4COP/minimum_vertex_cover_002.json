@@ -1,0 +1,28 @@
+{
+  "problem_id": "minimum_vertex_cover_002",
+  "metadata": {
+    "problem_type": "Minimum Vertex Cover Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A large shopping mall needs to install security cameras at strategic locations to monitor all corridors and pathways connecting 25 key areas throughout the building. The security team wants to minimize the number of cameras while ensuring that every corridor between areas is monitored by at least one camera. The mall has corridors linking these areas as follows: area 0 links to areas 1, 2, and 3; area 1 links to areas 4 and 5; area 2 links to areas 6 and 7; area 3 links to areas 8 and 9; area 4 links to areas 10 and 11; area 5 links to areas 12 and 13; area 6 links to areas 14 and 15; area 7 links to areas 16 and 17; area 8 links to areas 18 and 19; area 9 links to areas 20 and 21; area 10 links to area 22; area 11 links to area 23; area 12 links to area 24; area 13 links to area 14; area 15 links to area 16; area 17 links to area 18; area 19 links to area 20; area 21 links to area 22; area 23 links to area 24; area 10 also links to area 12; area 11 also links to area 13; area 14 also links to area 15; area 16 also links to area 17; area 18 also links to area 19; area 20 also links to area 21; area 22 also links to area 23; and area 24 links back to area 0.",
+  "solution_format_description": "Print the following fields: - selected_areas: areas where cameras should be installed. - num_cameras: total number of cameras.",
+  "structured_data": {
+    "num_areas": 25,
+    "corridors": [
+      [0, 1], [0, 2], [0, 3], [1, 4], [1, 5],
+      [2, 6], [2, 7], [3, 8], [3, 9], [4, 10],
+      [4, 11], [5, 12], [5, 13], [6, 14], [6, 15],
+      [7, 16], [7, 17], [8, 18], [8, 19], [9, 20],
+      [9, 21], [10, 22], [11, 23], [12, 24], [13, 14],
+      [15, 16], [17, 18], [19, 20], [21, 22], [23, 24],
+      [10, 12], [11, 13], [14, 15], [16, 17], [18, 19],
+      [20, 21], [22, 23], [24, 0], [13, 14], [15, 16]
+    ]
+  },
+  "reference_solution": {
+    "selected_areas": [0, 1, 5, 6, 7, 8, 9, 10, 11, 14, 16, 18, 20, 22, 24],
+    "num_cameras": 15
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nnum_areas = 25\ncorridors = [\n    [0, 1], [0, 2], [0, 3], [1, 4], [1, 5],\n    [2, 6], [2, 7], [3, 8], [3, 9], [4, 10],\n    [4, 11], [5, 12], [5, 13], [6, 14], [6, 15],\n    [7, 16], [7, 17], [8, 18], [8, 19], [9, 20],\n    [9, 21], [10, 22], [11, 23], [12, 24], [13, 14],\n    [15, 16], [17, 18], [19, 20], [21, 22], [23, 24],\n    [10, 12], [11, 13], [14, 15], [16, 17], [18, 19],\n    [20, 21], [22, 23], [24, 0], [13, 14], [15, 16]\n]\n\ncameras = boolvar(shape=num_areas)\n\nmodel = Model()\n\nfor corridor in corridors:\n    u, v = corridor\n    model += cameras[u] | cameras[v]\n\nmodel.minimize(sum(cameras))\n\nif model.solve():\n    selected_areas = [i for i in range(num_areas) if cameras[i].value()]\n    result = {\n        \"selected_areas\": selected_areas,\n        \"num_cameras\": len(selected_areas)\n    }\n    print(json.dumps(result))\nelse:\n    print(\"No solution found\")",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_areas\", \"num_cameras\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected = solution[\"selected_areas\"]\n        num_cameras = solution[\"num_cameras\"]\n        corridors = structured_data[\"corridors\"]\n        num_areas = structured_data[\"num_areas\"]\n        errors = []\n        \n        if not isinstance(selected, list):\n            errors.append(\"selected_areas must be an array\")\n        \n        if len(selected) != num_cameras:\n            errors.append(f\"Array length mismatch: expected {num_cameras}, got {len(selected)}\")\n        \n        for idx in selected:\n            if not isinstance(idx, int) or idx < 0 or idx >= num_areas:\n                errors.append(f\"Invalid area index: {idx}\")\n        \n        uncovered_corridors = []\n        for i, corridor in enumerate(corridors):\n            u, v = corridor\n            if u not in selected and v not in selected:\n                uncovered_corridors.append(corridor)\n        \n        if uncovered_corridors:\n            errors.append(f\"Uncovered corridors: {uncovered_corridors}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_cameras = reference_solution[\"num_cameras\"]\n            if optimal_cameras == 0:\n                optimality_score = 1.0 if num_cameras == 0 else 0.0\n            else:\n                gap = abs(optimal_cameras - num_cameras) / abs(optimal_cameras)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

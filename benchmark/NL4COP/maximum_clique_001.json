@@ -1,0 +1,28 @@
+{
+  "problem_id": "maximum_clique_001",
+  "metadata": {
+    "problem_type": "Maximum Clique Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A social network analyst is conducting an in-depth study on interpersonal relationship dynamics within a diverse community of 10 individuals who regularly interact through various social activities and gatherings. The complex friendship network reveals that person 0 has established meaningful connections with persons 1, 2, 3, 4, and 5 through shared interests and frequent interactions. Person 1's social circle includes persons 2, 3, 4, and 6, with whom they maintain regular communication and mutual support. Person 2 has developed strong bonds with persons 3, 5, 6, and 7 through collaborative projects and recreational activities. Person 3's interpersonal network extends to persons 4, 6, and 7, characterized by trust and reciprocal relationships. Person 4 maintains close friendships with persons 5, 7, and 8, often participating in group events together. Person 5's social connections include persons 6, 7, and 9, forming a supportive community network. Person 6 enjoys companionship with persons 7 and 8, sharing common experiences and values. Person 7 has formed a significant friendship with person 9, marked by deep understanding and mutual respect. Finally, person 8 has established a meaningful connection with person 9 through shared activities and interests. The analyst aims to identify the most cohesive subgroup where complete mutual familiarity exists among all members, determining exactly which individuals form this tightly-knit social cluster and quantifying its size.",
+  "solution_format_description": "Print the following fields: - selected_people: people in the maximum clique. - group_size: size of the maximum clique.",
+  "structured_data": {
+    "friendships": [
+      [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],
+      [1, 2], [1, 3], [1, 4], [1, 6],
+      [2, 3], [2, 5], [2, 6], [2, 7],
+      [3, 4], [3, 6], [3, 7],
+      [4, 5], [4, 7], [4, 8],
+      [5, 6], [5, 7], [5, 9],
+      [6, 7], [6, 8],
+      [7, 9], [8, 9]
+    ],
+    "num_people": 10
+  },
+  "reference_solution": {
+    "selected_people": [0, 1, 2, 3],
+    "group_size": 4
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_people\", \"group_size\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected_people = solution[\"selected_people\"]\n        group_size = solution[\"group_size\"]\n        friendships = structured_data[\"friendships\"]\n        num_people = structured_data[\"num_people\"]\n        errors = []\n        \n        if group_size != len(selected_people):\n            errors.append(f\"Group size mismatch: declared {group_size}, actual {len(selected_people)}\")\n        \n        for person in selected_people:\n            if person < 0 or person >= num_people:\n                errors.append(f\"Invalid person ID: {person}\")\n        \n        if len(selected_people) != len(set(selected_people)):\n            errors.append(\"Duplicate people in selection\")\n        \n        adj = set()\n        for u, v in friendships:\n            adj.add((u, v))\n            adj.add((v, u))\n        \n        for i in range(len(selected_people)):\n            for j in range(i + 1, len(selected_people)):\n                u, v = selected_people[i], selected_people[j]\n                if (u, v) not in adj:\n                    errors.append(f\"Not a clique: {u} and {v} are not friends\")\n        \n        if not errors:\n            optimal_size = reference_solution[\"group_size\"]\n            if optimal_size == 0:\n                optimality_score = 1.0 if group_size == 0 else 0.0\n            else:\n                optimality_score = group_size / optimal_size\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

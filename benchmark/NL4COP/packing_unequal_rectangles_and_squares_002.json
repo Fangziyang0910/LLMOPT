@@ -1,0 +1,60 @@
+{
+  "problem_id": "packing_unequal_rectangles_and_squares_002",
+  "metadata": {
+    "problem_type": "Packing unequal rectangles and squares",
+    "difficulty": "medium"
+  },
+  "problem_description": "Global Freight Solutions operates a major cargo consolidation facility where they need to optimize the loading of nineteen different shipping containers onto a circular loading platform with a radius of 7.19 meters, centered at coordinates (7.19, 7.19) in their warehouse layout system. The facility handles an extremely diverse inventory of container types with dramatic aspect ratio variations: the inventory includes a 1.0 by 1.0 meter square container, followed by ultra-elongated containers measuring 2.5 by 0.4 meters, 2.3 by 0.5 meters, then ultra-tall narrow containers sized 0.4 by 2.4 meters and 0.5 by 2.2 meters, an extremely elongated 2.8 by 0.3 meter container, a very tall 0.3 by 2.6 meter container, moderately elongated containers including 2.1 by 0.6 meters and 1.9 by 0.7 meters, a tall 0.6 by 2.0 meter container, a medium 1.5 by 1.5 meter square container, an extremely long 3.0 by 0.2 meter container, an ultra-tall 0.2 by 2.8 meter container, elongated containers measuring 2.4 by 0.4 meters and 2.6 by 0.3 meters, a tall 0.3 by 2.5 meter container, a 1.3 by 1.3 meter square container, a 2.2 by 0.5 meter elongated container, and finally a 0.5 by 2.1 meter tall narrow container. The loading supervisor must determine the optimal placement strategy to maximize the number of containers that can be successfully accommodated on the platform. Each container can be placed either in its standard orientation or rotated by ninety degrees to better fit the available space, which is absolutely critical for the extreme aspect ratio containers to achieve efficient packing. The loading operations team must ensure that every selected container fits completely within the circular boundary of the loading platform, with no part extending beyond the platform's edge. Additionally, containers cannot overlap with each other - their footprints must remain separate to prevent damage during loading and unloading operations.",
+  "solution_format_description": "Print the following fields: - placements: for each container, list placement with x, y, rotation angle. - total_count: total number of placed containers.",  
+  "structured_data": {
+    "loading_surface_radius": 7.19,
+    "loading_surface_center": [7.19, 7.19],
+    "cargo_units": [
+      [1.0, 1.0],
+      [2.5, 0.4],
+      [2.3, 0.5],
+      [0.4, 2.4],
+      [0.5, 2.2],
+      [2.8, 0.3],
+      [0.3, 2.6],
+      [2.1, 0.6],
+      [1.9, 0.7],
+      [0.6, 2.0],
+      [1.5, 1.5],
+      [3.0, 0.2],
+      [0.2, 2.8],
+      [2.4, 0.4],
+      [2.6, 0.3],
+      [0.3, 2.5],
+      [1.3, 1.3],
+      [2.2, 0.5],
+      [0.5, 2.1]
+    ]
+  },
+  "reference_solution": {
+    "placements": [
+      [7.02, 9.88, 0], 
+      [8.99, 7.18, 0], 
+      [5.69, 3.38, 90], 
+      [7.02, 7.48, 0], 
+      [6.19, 4.08, 0], 
+      [5.22, 6.48, 90], 
+      [7.42, 9.58, 90], 
+      [4.09, 5.88, 0], 
+      [8.22, 8.47, 0], 
+      [7.42, 7.58, 0], 
+      [5.52, 6.98, 0], 
+      [8.02, 5.83, 90], 
+      [7.42, 3.68, 0], 
+      [8.22, 6.07, 90], 
+      [9.99, 7.58, 0], 
+      [6.69, 3.97, 0], 
+      [7.02, 10.88, 0], 
+      [5.53, 6.48, 0], 
+      [6.12, 8.48, 0]
+    ], 
+    "total_count": 19
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nloading_surface_center_x = 7.19\nloading_surface_center_y = 7.19\nloading_surface_radius = 7.19\ncargo_units = [\n    [1.0, 1.0],\n    [2.5, 0.4],\n    [2.3, 0.5],\n    [0.4, 2.4],\n    [0.5, 2.2],\n    [2.8, 0.3],\n    [0.3, 2.6],\n    [2.1, 0.6],\n    [1.9, 0.7],\n    [0.6, 2.0],\n    [1.5, 1.5],\n    [3.0, 0.2],\n    [0.2, 2.8],\n    [2.4, 0.4],\n    [2.6, 0.3],\n    [0.3, 2.5],\n    [1.3, 1.3],\n    [2.2, 0.5],\n    [0.5, 2.1]\n]\n\nn = len(cargo_units)\nscale = 100\n\nloading_surface_center_x_scaled = int(loading_surface_center_x * scale)\nloading_surface_center_y_scaled = int(loading_surface_center_y * scale)\nloading_surface_radius_scaled = int(loading_surface_radius * scale)\ncargo_units_scaled = [\n    [int(unit[0] * scale), int(unit[1] * scale)] for unit in cargo_units\n]\n\nplaced = boolvar(shape=n)\nx = intvar(-scale, 2 * loading_surface_center_x_scaled + scale, shape=n)\ny = intvar(-scale, 2 * loading_surface_center_y_scaled + scale, shape=n)\nrotated = boolvar(shape=n)\n\nmodel = Model()\n\nfor i in range(n):\n    model += (placed[i] == 0).implies((x[i] == -scale) & (y[i] == -scale))\n\nwidths = []\nheights = []\nfor i in range(n):\n    w, h = cargo_units_scaled[i]\n    widths.append(intvar(min(w, h), max(w, h), name=f\"width_{i}\"))\n    heights.append(intvar(min(w, h), max(w, h), name=f\"height_{i}\"))\n    \n    model += (rotated[i] == 0).implies(widths[i] == w)\n    model += (rotated[i] == 0).implies(heights[i] == h)\n    model += (rotated[i] == 1).implies(widths[i] == h)\n    model += (rotated[i] == 1).implies(heights[i] == w)\n\nfor i in range(n):\n    for j in range(i + 1, n):\n        no_overlap = ((x[i] + widths[i] <= x[j]) | \n                     (x[j] + widths[j] <= x[i]) | \n                     (y[i] + heights[i] <= y[j]) | \n                     (y[j] + heights[j] <= y[i]))\n        \n        model += (placed[i] & placed[j]).implies(no_overlap)\n\nfor i in range(n):\n    corners = [\n        (x[i], y[i]),                    \n        (x[i] + widths[i], y[i]),        \n        (x[i], y[i] + heights[i]),        \n        (x[i] + widths[i], y[i] + heights[i])  \n    ]\n    \n    for corner_x, corner_y in corners:\n        dx = corner_x - loading_surface_center_x_scaled\n        dy = corner_y - loading_surface_center_y_scaled\n        model += (placed[i] == 1).implies(dx * dx + dy * dy <= loading_surface_radius_scaled * loading_surface_radius_scaled)\n\nmodel.maximize(sum(placed[i] for i in range(n)))\n\nif model.solve():\n    placements = []\n    total_count = 0\n    for i in range(n):\n        if placed[i].value():\n            center_x = x[i].value() / scale\n            center_y = y[i].value() / scale\n            theta = 90 if rotated[i].value() else 0\n            placements.append([round(center_x, 2), round(center_y, 2), theta])\n            total_count += 1\n        else:\n            placements.append([-1, -1, 0])\n    \n    result = {\"placements\": placements, \"total_count\": total_count}\n    print(json.dumps(result))\nelse:\n    print(json.dumps({\"placements\": [], \"total_count\": 0}))",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    import math\n\n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n\n    required_fields = [\"placements\", \"total_volume\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n\n    try:\n        placements = solution[\"placements\"]\n        total_volume = solution[\"total_volume\"]\n        items = structured_data[\"cargo_units\"]\n        platform_cx = structured_data[\"loading_surface_center\"][0]\n        platform_cy = structured_data[\"loading_surface_center\"][1]\n        platform_R = structured_data[\"loading_surface_radius\"]\n        \n        errors = []\n        tol = 1e-5\n\n        if not isinstance(placements, list) or len(placements) != len(items):\n            errors.append(f\"Array length mismatch: expected {len(items)}, got {len(placements)}\")\n            return {\"is_valid\": False, \"validation_errors\": errors, \"optimality_score\": 0.0}\n\n        placed_items = []\n\n        for idx, placement in enumerate(placements):\n            if not isinstance(placement, list) or len(placement) != 3:\n                errors.append(f\"Placement {idx} must be a list of [x, y, theta].\")\n                continue\n            \n            x, y, theta = placement\n\n            if x == -1 and y == -1:\n                continue\n\n            if not (math.isclose(theta, 0, abs_tol=1e-3) or math.isclose(theta, 90, abs_tol=1e-3)):\n                errors.append(f\"Container {idx}: rotation angle must be 0 or 90 degrees.\")\n\n            L, W = items[idx][0], items[idx][1]\n\n            if math.isclose(theta, 90, abs_tol=1e-3):\n                eff_L, eff_W = W, L\n            else:\n                eff_L, eff_W = L, W\n\n            if not (isinstance(x, (int, float)) and isinstance(y, (int, float))):\n                 errors.append(f\"Container {idx}: coordinates must be numbers.\")\n                 continue\n            \n            corners = [\n                (x - eff_L/2, y - eff_W/2),\n                (x + eff_L/2, y - eff_W/2),\n                (x - eff_L/2, y + eff_W/2),\n                (x + eff_L/2, y + eff_W/2)\n            ]\n            \n            for corner_x, corner_y in corners:\n                dist = math.hypot(corner_x - platform_cx, corner_y - platform_cy)\n                if dist > platform_R + tol:\n                    errors.append(f\"Container {idx}: corner ({corner_x:.2f}, {corner_y:.2f}) lies outside the circular boundary.\")\n\n            xmin = x - eff_L / 2.0\n            ymin = y - eff_W / 2.0\n            xmax = xmin + eff_L\n            ymax = ymin + eff_W\n            \n            current_rect = (xmin, xmax, ymin, ymax, idx)\n\n            for other_rect in placed_items:\n                oxmin, oxmax, oymin, oymax, oidx = other_rect\n                \n                if not (xmax <= oxmin + tol or xmin >= oxmax - tol or\n                        ymax <= oymin + tol or ymin >= oymax - tol):\n                    errors.append(f\"Container {idx} overlaps with container {oidx}.\")\n\n            placed_items.append(current_rect)\n\n        is_solution_valid = (len(errors) == 0)\n        \n        if not is_solution_valid:\n            return {\n                \"is_valid\": False,\n                \"validation_errors\": errors,\n                \"optimality_score\": 0.0\n            }\n        else:\n            optimal_volume = reference_solution[\"total_volume\"]\n            if optimal_volume == 0:\n                optimality_score = 1.0 if total_volume == 0 else 0.0\n            else:\n                gap = abs(optimal_volume - total_volume) / abs(optimal_volume)\n                optimality_score = max(0, 1 - gap)\n\n            return {\n                \"is_valid\": True,\n                \"validation_errors\": [],\n                \"optimality_score\": optimality_score\n            }\n\n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

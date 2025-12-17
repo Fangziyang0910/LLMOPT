@@ -1,0 +1,42 @@
+{
+  "problem_id": "travelling_thief_problem_001",
+  "metadata": {
+    "problem_type": "Travelling Thief Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "An archaeological team is setting out from their research base to explore four excavation sites. The research base serves as the starting point at coordinates (0, 0), with all distances measured in kilometers. The excavation sites and their available artifacts are: Site 1 at coordinates (23, 45) has three artifacts including a bronze dagger valued at 80 dollars weighing 3 kg, a ceremonial bronze tripod valued at 150 dollars weighing 6 kg, and a bronze mirror with animal designs valued at 180 dollars weighing 7 kg; Site 2 at coordinates (156, 78) contains three artifacts including a blue and white porcelain vase valued at 120 dollars weighing 5 kg, a white porcelain bowl valued at 60 dollars weighing 2 kg, and a painted pottery jar valued at 140 dollars weighing 5 kg; Site 3 at coordinates (89, 234) offers two artifacts including a jade bi disc ritual object valued at 200 dollars weighing 8 kg and a jade cong tube valued at 90 dollars weighing 4 kg; Site 4 at coordinates (267, 123) presents two artifacts including a gold-inlaid bronze mirror valued at 100 dollars weighing 4 kg and a silver ornamental set valued at 250 dollars weighing 9 kg. The team must start from the research base, visit each excavation site exactly once, and then return to the base. All locations can be reached by straight-line travel. The team can only carry up to 25 kg of artifacts in their equipment. The team's vehicle speed changes linearly with the weight they're carrying - moving at 50.0 km/h when completely unburdened, and slowing down proportionally as more weight is added, reaching exactly 10.0 km/h when carrying the full 25 kg capacity. The team has to pay travel expenses of 0.5 dollars for each hour they spend on the road, which covers their fuel, food, accommodation, and equipment costs during the journey. Artifacts can only be collected from their original sites, and each artifact can either be taken or left behind (no partial selections). The total weight of collected artifacts must not exceed 25 kg. Which artifacts should the archaeological team collect and which route should they plan to maximize their net profit after deducting travel expenses?",
+  "solution_format_description": "Print the following fields: - site_visit_order: complete route visiting all sites. - collected_artifacts: selected artifacts. - net_value: total artifact value minus travel cost. - total_weight: total weight of collected artifacts. - total_travel_time: total travel time.",  
+  "structured_data": {
+    "excavation_sites": [
+      [23, 45],
+      [156, 78],
+      [89, 234],
+      [267, 123]
+    ],
+    "artifacts": [
+      [80, 3, 1],
+      [150, 6, 1],
+      [180, 7, 1],
+      [120, 5, 2],
+      [60, 2, 2],
+      [140, 5, 2],
+      [200, 8, 3],
+      [90, 4, 3],
+      [100, 4, 4],
+      [250, 9, 4]
+    ],
+    "equipment_capacity": 25,
+    "min_speed": 10.0,
+    "max_speed": 50,
+    "travel_cost_per_hour": 0.5
+  },
+  "reference_solution": {
+    "site_visit_order": [0, 3, 4, 2, 1, 0],
+    "collected_artifacts": [10, 6, 7, 1, 2],
+    "net_value": 668.3817,
+    "total_weight": 25,
+    "total_travel_time": 23.2367
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"site_visit_order\", \"collected_artifacts\", \"total_weight\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        site_visit_order = solution[\"site_visit_order\"]\n        collected_artifacts = solution[\"collected_artifacts\"]\n        total_weight = solution[\"total_weight\"]\n        \n        excavation_sites = structured_data[\"excavation_sites\"]\n        artifacts = structured_data[\"artifacts\"]\n        equipment_capacity = structured_data[\"equipment_capacity\"]\n        \n        errors = []\n        \n        if len(site_visit_order) != 6:\n            errors.append(f\"Route must have 6 positions (start, 4 sites, end), got {len(site_visit_order)}\")\n        \n        if site_visit_order[0] != 0 or site_visit_order[-1] != 0:\n            errors.append(\"Route must start and end at base (0)\")\n        \n        visited_sites = site_visit_order[1:-1]\n        if set(visited_sites) != set(range(1, 5)):\n            errors.append(\"Route must visit each excavation site exactly once\")\n        \n        if total_weight > equipment_capacity:\n            errors.append(f\"Weight constraint violated: {total_weight} > {equipment_capacity}\")\n        \n        valid_artifact_ids = set(range(1, len(artifacts)+1))\n        for art_id in collected_artifacts:\n            if art_id not in valid_artifact_ids:\n                errors.append(f\"Invalid artifact ID: {art_id}\")\n        \n        for artifact_id in collected_artifacts:\n            artifact_site = artifacts[artifact_id-1][2]\n            if artifact_site not in visited_sites:\n                errors.append(f\"Artifact {artifact_id} from site {artifact_site} is collected but site {artifact_site} is not visited\")\n        \n        if len(errors) == 0:\n            if \"net_value\" in solution:\n                optimal_value = reference_solution[\"net_value\"]\n                candidate_value = solution[\"net_value\"]\n                \n                if optimal_value == 0:\n                    optimality_score = 1.0 if candidate_value == 0 else 0.0\n                else:\n                    gap = abs(optimal_value - candidate_value) / abs(optimal_value)\n                    optimality_score = max(0, 1 - gap)\n            else:\n                optimality_score = 0.0\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

@@ -1,0 +1,44 @@
+{
+  "problem_id": "k_shortest_paths_001",
+  "metadata": {
+    "problem_type": "k-Shortest Paths Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A telecommunications company operates a network with 10 nodes consisting of 1 main server, 8 relay stations, and 1 critical data center. The network contains 18 directed transmission links with varying delays: connections from the server to relays 1, 4, and 7 have delays of 2ms, 1ms, and 3ms respectively; relay 1 connects to relay 2 and relay 5 with delays of 3ms and 2ms respectively; relay 2 connects to relay 3 and relay 6 with delays of 1ms and 4ms respectively; relay 3 connects to the data center and relay 8 with delays of 4ms and 3ms respectively; relay 4 connects to relay 5 and relay 7 with delays of 2ms and 1ms respectively; relay 5 connects to relay 6 and the data center with delays of 3ms and 6ms respectively; relay 6 connects to the data center and relay 8 with delays of 2ms and 2ms respectively; relay 7 connects to relay 8 and relay 2 with delays of 2ms and 3ms respectively; and relay 8 connects to the data center with a delay of 5ms. Each valid transmission path must follow the data transmission direction of each node, start from the server, end at the data center, and visit each station no more than once. To ensure reliable data transmission, the company wants to find exactly 5 distinct backup transmission routes ranked from shortest to longest total delay. If there are fewer than 5 paths available, find all possible transmission routes.",
+  "solution_format_description": "Print the following fields: - paths: transmission paths from server to data center. - total_delays: total delay time for each path in milliseconds.",
+  "structured_data": {
+    "transmission_links": [
+      [0, 1, 2],
+      [0, 4, 1],
+      [0, 7, 3],
+      [1, 2, 3],
+      [1, 5, 2],
+      [2, 3, 1],
+      [2, 6, 4],
+      [3, 9, 4],
+      [3, 8, 3],
+      [4, 5, 2],
+      [4, 7, 1],
+      [5, 6, 3],
+      [5, 9, 6],
+      [6, 9, 2],
+      [6, 8, 2],
+      [7, 8, 2],
+      [7, 2, 3],
+      [8, 9, 5]
+    ],
+    "required_routes": 5
+  },
+  "reference_solution": {
+    "paths": [
+      [0, 4, 5, 6, 9], 
+      [0, 1, 5, 6, 9], 
+      [0, 4, 5, 9], 
+      [0, 4, 7, 8, 9], 
+      [0, 1, 2, 3, 9]
+    ],
+    "total_delays": [8, 9, 9, 9, 10]
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"paths\", \"total_delays\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        paths = solution[\"paths\"]\n        total_delays = solution[\"total_delays\"]\n        transmission_links = structured_data[\"transmission_links\"]\n        required_routes = structured_data[\"required_routes\"]\n        errors = []\n        \n        if len(paths) != len(total_delays):\n            errors.append(f\"Paths and delays length mismatch: {len(paths)} vs {len(total_delays)}\")\n        \n        if len(paths) > required_routes:\n            errors.append(f\"Too many paths: {len(paths)}, maximum allowed: {required_routes}\")\n        \n        adj = {}\n        for u, v, delay in transmission_links:\n            if u not in adj:\n                adj[u] = {}\n            adj[u][v] = delay\n        \n        for i, path in enumerate(paths):\n            if len(path) == 0:\n                errors.append(f\"Path {i} is empty\")\n                continue\n                \n            if path[0] != 0:\n                errors.append(f\"Path {i} does not start at source node 0: starts at {path[0]}\")\n            \n            if path[-1] != 9:\n                errors.append(f\"Path {i} does not end at target node 9: ends at {path[-1]}\")\n            \n            actual_delay = 0\n            for j in range(len(path) - 1):\n                u, v = path[j], path[j + 1]\n                if u not in adj or v not in adj[u]:\n                    errors.append(f\"Path {i} has invalid segment: {u} -> {v} (no direct connection)\")\n                    break\n                actual_delay += adj[u][v]\n            \n            if i < len(total_delays):\n                if abs(actual_delay - total_delays[i]) > 1e-6:\n                    errors.append(f\"Path {i} delay mismatch: calculated {actual_delay}, declared {total_delays[i]}\")\n            \n            if len(path) != len(set(path)):\n                errors.append(f\"Path {i} is not a simple path: contains repeated nodes\")\n        \n        unique_paths = []\n        for i, path in enumerate(paths):\n            path_tuple = tuple(path)\n            if path_tuple in unique_paths:\n                errors.append(f\"Path {i} is a duplicate of another path\")\n            else:\n                unique_paths.append(path_tuple)\n        \n        if not errors and len(paths) > 0:\n            optimal_delays = reference_solution[\"total_delays\"]\n            candidate_delays = total_delays[:len(optimal_delays)]\n            \n            total_optimal = sum(optimal_delays)\n            total_candidate = sum(candidate_delays)\n            \n            if total_optimal == 0:\n                optimality_score = 1.0 if total_candidate == 0 else 0.0\n            else:\n                gap = abs(total_optimal - total_candidate) / total_optimal\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

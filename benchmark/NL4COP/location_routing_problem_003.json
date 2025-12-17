@@ -1,0 +1,54 @@
+{
+  "problem_id": "location_routing_problem_003",
+  "metadata": {
+    "problem_type": "Location-Routing Problem",
+    "difficulty": "hard"
+  },
+  "problem_description": "A growing e-commerce logistics company needs to establish warehouses and delivery routes for serving 20 retail stores across a large city. All locations are directly accessible from each other. All locations are measured in kilometers from the city center. The company has identified 4 potential locations for warehouses: Warehouse 1 at (30, 30) with setup cost $1500 and capacity to handle 800 packages daily, Warehouse 2 at (70, 50) with setup cost $1800 and capacity to handle 900 packages daily, Warehouse 3 at (50, 70) with setup cost $2000 and capacity to handle 1000 packages daily, and Warehouse 4 at (40, 60) with setup cost $1700 and capacity to handle 850 packages daily. Each warehouse's daily processing capacity cannot be exceeded. The 20 retail stores are located at different coordinates throughout the city with specific daily package delivery requirements that must be exactly met: Store 1 at (15, 25) needs 80 packages daily, Store 2 at (35, 45) needs 90 packages daily, Store 3 at (55, 15) needs 70 packages daily, Store 4 at (75, 35) needs 85 packages daily, Store 5 at (25, 55) needs 75 packages daily, Store 6 at (45, 75) needs 95 packages daily, Store 7 at (65, 25) needs 80 packages daily, Store 8 at (85, 45) needs 65 packages daily, Store 9 at (15, 65) needs 100 packages daily, Store 10 at (35, 85) needs 60 packages daily, Store 11 at (55, 35) needs 70 packages daily, Store 12 at (75, 55) needs 85 packages daily, Store 13 at (25, 15) needs 80 packages daily, Store 14 at (45, 35) needs 90 packages daily, Store 15 at (65, 55) needs 75 packages daily, Store 16 at (85, 15) needs 85 packages daily, Store 17 at (15, 35) needs 95 packages daily, Store 18 at (35, 55) needs 65 packages daily, Store 19 at (55, 75) needs 100 packages daily, and Store 20 at (75, 85) needs 60 packages daily. The company operates delivery trucks that can transport up to 450 packages per trip, with each truck costing $250 to operate per day plus $10 per kilometer of travel distance. Each delivery truck must start from its assigned warehouse, serve its designated stores, and return to the same warehouse, ensuring every store is served exactly once. The total cost includes warehouse setup costs, truck operating costs, and transportation costs. The company needs to decide which warehouses to open and how to organize delivery routes to serve all stores with minimal total cost.",
+  "solution_format_description": "Print the following fields: - opened_warehouses: which warehouses are open. - delivery_routes: delivery routes for each truck with warehouse, stores, and packages. - total_cost: total cost including setup and transportation.",
+  "structured_data": {
+    "retail_stores": [
+      [15, 25, 80],
+      [35, 45, 90],
+      [55, 15, 70],
+      [75, 35, 85],
+      [25, 55, 75],
+      [45, 75, 95],
+      [65, 25, 80],
+      [85, 45, 65],
+      [15, 65, 100],
+      [35, 85, 60],
+      [55, 35, 70],
+      [75, 55, 85],
+      [25, 15, 80],
+      [45, 35, 90],
+      [65, 55, 75],
+      [85, 15, 85],
+      [15, 35, 95],
+      [35, 55, 65],
+      [55, 75, 100],
+      [75, 85, 60]
+    ],
+    "warehouses": [
+      [30, 30, 1500, 800],
+      [70, 50, 1800, 900],
+      [50, 70, 2000, 1000],
+      [40, 60, 1700, 850]
+    ],
+    "truck_package_capacity": 450,
+    "truck_operating_cost": 250,
+    "transport_cost_per_km": 10
+  },
+  "reference_solution": {
+    "opened_warehouses": [2, 4],
+    "delivery_routes": [
+      [2, [3, 15, 6, 2, 10], 390],
+      [2, [14, 18, 19, 11, 7], 385],
+      [4, [1, 16, 0, 12, 13], 435],
+      [4, [17, 4, 8, 9, 5], 395]
+    ],
+    "total_cost": 8832
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"opened_warehouses\", \"delivery_routes\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        opened_warehouses = solution[\"opened_warehouses\"]\n        delivery_routes = solution[\"delivery_routes\"]\n        total_cost = solution[\"total_cost\"]\n        \n        retail_stores = structured_data[\"retail_stores\"]\n        warehouses = structured_data[\"warehouses\"]\n        truck_package_capacity = structured_data[\"truck_package_capacity\"]\n        \n        errors = []\n        \n        served_stores = set()\n        for route in delivery_routes:\n            route_stores = route[1]\n            for store in route_stores:\n                if store in served_stores:\n                    errors.append(f\"Store {store} is served multiple times\")\n                served_stores.add(store)\n        \n        all_stores = set(range(len(retail_stores)))\n        unserved_stores = all_stores - served_stores\n        if unserved_stores:\n            errors.append(f\"Stores not served: {unserved_stores}\")\n        \n        for i, route in enumerate(delivery_routes):\n            package_load = route[2]\n            if package_load > truck_package_capacity:\n                errors.append(f\"Route {i} exceeds truck capacity: {package_load} > {truck_package_capacity}\")\n        \n        warehouse_loads = {w: 0 for w in opened_warehouses}\n        for route in delivery_routes:\n            warehouse_id = route[0]\n            package_load = route[2]\n            warehouse_loads[warehouse_id] += package_load\n        \n        for warehouse_id, load in warehouse_loads.items():\n            capacity = warehouses[warehouse_id][3]\n            if load > capacity:\n                errors.append(f\"Warehouse {warehouse_id} capacity exceeded: {load} > {capacity}\")\n        \n        for route in delivery_routes:\n            warehouse_id = route[0]\n            if warehouse_id not in opened_warehouses:\n                errors.append(f\"Route uses unopened warehouse {warehouse_id}\")\n        \n        if len(errors) == 0:\n            optimal_cost = reference_solution[\"total_cost\"]\n            if optimal_cost == 0:\n                optimality_score = 1.0 if total_cost == 0 else 0.0\n            else:\n                gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

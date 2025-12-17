@@ -1,0 +1,31 @@
+{
+  "problem_id": "covering_location_001",
+  "metadata": {
+    "problem_type": "Covering Location Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A city planning department needs to determine optimal locations for emergency service facilities to serve 10 neighborhoods across the city and ensure maximum resident access to critical emergency services. They must select exactly 3 neighborhoods out of these 10 to establish emergency service centers, with each center providing service to neighborhoods within a 1.5-kilometer radius. A neighborhood is considered covered if at least one facility is within the 1.5-kilometer service radius. The neighborhoods are distributed across the city at the following coordinates (in kilometers, with the city center at origin (0,0)): Neighborhood 0 is located at coordinates (1.0, 2.0) and has a population of 5200 residents, Neighborhood 1 is situated at coordinates (1.5, 3.0) and has a population of 3800 residents, Neighborhood 2 is positioned at coordinates (2.5, 1.5) and has a population of 4500 residents, Neighborhood 3 is found at coordinates (3.5, 2.5) and has a population of 6100 residents, Neighborhood 4 is established at coordinates (4.5, 1.8) and has a population of 3500 residents, Neighborhood 5 is placed at coordinates (2.0, 4.0) and has a population of 4200 residents, Neighborhood 6 is located at coordinates (3.0, 3.5) and has a population of 5500 residents, Neighborhood 7 is situated at coordinates (4.0, 3.2) and has a population of 2800 residents, Neighborhood 8 is positioned at coordinates (5.0, 2.8) and has a population of 7300 residents, and Neighborhood 9 is found at coordinates (3.8, 4.2) and has a population of 2100 residents.",
+  "solution_format_description": "Print the following fields: - selected_neighborhoods: neighborhoods chosen for facilities. - total_covered_population: total population covered by facilities.",
+  "structured_data": {
+    "neighborhoods": [
+      [1.0, 2.0, 5200],
+      [1.5, 3.0, 3800],
+      [2.5, 1.5, 4500],
+      [3.5, 2.5, 6100],
+      [4.5, 1.8, 3500],
+      [2.0, 4.0, 4200],
+      [3.0, 3.5, 5500],
+      [4.0, 3.2, 2800],
+      [5.0, 2.8, 7300],
+      [3.8, 4.2, 2100]
+    ],
+    "service_radius_km": 1.5,
+    "max_emergency_facilities": 3
+  },
+  "reference_solution": {
+    "selected_neighborhoods": [1, 2, 7],
+    "total_covered_population": 45000
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_neighborhoods\", \"total_covered_population\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected_neighborhoods = solution[\"selected_neighborhoods\"]\n        total_covered_population = solution[\"total_covered_population\"]\n        neighborhoods = structured_data[\"neighborhoods\"]\n        service_radius = structured_data[\"service_radius_km\"]\n        max_facilities = structured_data[\"max_emergency_facilities\"]\n        errors = []\n        \n        if len(selected_neighborhoods) != max_facilities:\n            errors.append(f\"Selected neighborhoods count mismatch: expected {max_facilities}, got {len(selected_neighborhoods)}\")\n        \n        for idx in selected_neighborhoods:\n            if idx < 0 or idx >= len(neighborhoods):\n                errors.append(f\"Invalid neighborhood index: {idx}\")\n        \n        if len(selected_neighborhoods) != len(set(selected_neighborhoods)):\n            errors.append(\"Duplicate neighborhood indices in selection\")\n        \n        total_calculated_population = 0\n        calculated_covered = set()\n        \n        for j in range(len(neighborhoods)):\n            is_covered = False\n            for facility_idx in selected_neighborhoods:\n                x1, y1, _ = neighborhoods[facility_idx]\n                x2, y2, _ = neighborhoods[j]\n                distance = ((x1-x2)**2 + (y1-y2)**2)**0.5\n                \n                if distance <= service_radius:\n                    is_covered = True\n                    calculated_covered.add(j)\n                    break\n            \n            if is_covered:\n                total_calculated_population += neighborhoods[j][2]\n        \n        if abs(total_calculated_population - total_covered_population) > 1e-6:\n            errors.append(f\"Population calculation mismatch: calculated {total_calculated_population}, declared {total_covered_population}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_population = reference_solution[\"total_covered_population\"]\n            if optimal_population == 0:\n                optimality_score = 1.0 if total_covered_population == 0 else 0.0\n            else:\n                gap = abs(optimal_population - total_covered_population) / abs(optimal_population)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

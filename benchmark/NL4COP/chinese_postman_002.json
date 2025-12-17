@@ -1,0 +1,36 @@
+{
+  "problem_id": "chinese_postman_002",
+  "metadata": {
+    "problem_type": "Chinese Postman Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A municipal waste management company needs to plan an efficient collection route for garbage trucks that must service all streets in a large urban district. The district has 10 intersections connected by 16 street segments, each requiring garbage collection. The truck starts from the depot at intersection 0 and must collect waste from every street before returning to the starting point. The specific street information is the street connecting intersections 5 and 8 is 3.16 kilometers long and requires 8.0 minutes for collection, the street connecting intersections 8 and 6 is 8.06 kilometers long and requires 12.0 minutes for collection, the street connecting intersections 6 and 2 is 4.12 kilometers long and requires 6.0 minutes for collection, the street connecting intersections 2 and 7 is 6.00 kilometers long and requires 9.0 minutes for collection, the street connecting intersections 7 and 3 is 7.28 kilometers long and requires 11.0 minutes for collection, the street connecting intersections 3 and 4 is 5.83 kilometers long and requires 8.0 minutes for collection, the street connecting intersections 4 and 0 is 9.49 kilometers long and requires 14.0 minutes for collection, the street connecting intersections 0 and 9 is 10.77 kilometers long and requires 16.0 minutes for collection, the street connecting intersections 9 and 1 is 4.47 kilometers long and requires 7.0 minutes for collection, the street connecting intersections 1 and 2 is 5.39 kilometers long and requires 8.0 minutes for collection, the street connecting intersections 2 and 8 is 10.00 kilometers long and requires 15.0 minutes for collection, the street connecting intersections 8 and 9 is 12.21 kilometers long and requires 18.0 minutes for collection, the street connecting intersections 9 and 7 is 6.40 kilometers long and requires 10.0 minutes for collection, the street connecting intersections 7 and 6 is 2.24 kilometers long and requires 4.0 minutes for collection, the street connecting intersections 6 and 1 is 1.41 kilometers long and requires 3.0 minutes for collection, and the street connecting intersections 1 and 5 is 5.39 kilometers long and requires 8.0 minutes for collection. Each street must be completely serviced when first traversed, and the truck may need to travel along some streets multiple times (without additional collection) to complete an efficient closed route. How should the company plan the route to minimize the total cost of travel distance and collection time?",
+  "solution_format_description": "Print the following fields: - route: sequence of intersections visited. - total_cost: total distance and collection time cost.",
+  "structured_data": {
+  "num_intersections": 10,
+  "streets": [
+    [5, 8, 3.16, 8.0],
+    [8, 6, 8.06, 12.0],
+    [6, 2, 4.12, 6.0],
+    [2, 7, 6.00, 9.0],
+    [7, 3, 7.28, 11.0],
+    [3, 4, 5.83, 8.0],
+    [4, 0, 9.49, 14.0],
+    [0, 9, 10.77, 16.0],
+    [9, 1, 4.47, 7.0],
+    [1, 2, 5.39, 8.0],
+    [2, 8, 10.00, 15.0],
+    [8, 9, 12.21, 18.0],
+    [9, 7, 6.40, 10.0],
+    [7, 6, 2.24, 4.0],
+    [6, 1, 1.41, 3.0],
+    [1, 5, 5.39, 8.0]
+  ]
+},
+  "reference_solution": {
+    "route": [0, 9, 7, 6, 1, 5, 8, 9, 1, 2, 8, 6, 2, 7, 3, 4, 0],
+    "total_cost": 259.22
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"route\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        route = solution[\"route\"]\n        total_cost = solution[\"total_cost\"]\n        streets = structured_data[\"streets\"]\n        num_intersections = structured_data[\"num_intersections\"]\n        errors = []\n        \n        if not isinstance(route, list) or len(route) < 2:\n            errors.append(\"Route must be a non-empty list\")\n        \n        if route[0] != route[-1]:\n            errors.append(\"Route must start and end at the same intersection\")\n        \n        for node in route:\n            if not isinstance(node, int) or node < 0 or node >= num_intersections:\n                errors.append(f\"Invalid intersection: {node}\")\n        \n        covered_streets = set()\n        for i in range(len(route) - 1):\n            u = route[i]\n            v = route[i + 1]\n            \n            found = False\n            for j, (su, sv, _, _) in enumerate(streets):\n                if (su == u and sv == v) or (su == v and sv == u):\n                    covered_streets.add(j)\n                    found = True\n                    break\n            \n            if not found:\n                errors.append(f\"No street connects {u} and {v}\")\n        \n        if len(covered_streets) != len(streets):\n            errors.append(f\"Not all streets covered: {len(covered_streets)}/{len(streets)}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_cost = reference_solution[\"total_cost\"]\n            if optimal_cost == 0:\n                optimality_score = 1.0 if total_cost == 0 else 0.0\n            else:\n                gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

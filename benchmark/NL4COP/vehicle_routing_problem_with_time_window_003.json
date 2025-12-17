@@ -1,0 +1,70 @@
+{
+  "problem_id": "vehicle_routing_problem_with_time_window_003",
+  "metadata": {
+    "problem_type": "Vehicle Routing Problem with Time Window",
+    "difficulty": "hard"
+  },
+  "problem_description": "A medical supply company needs to coordinate emergency equipment deliveries to 40 different hospitals across the city using 7 delivery vehicles. The company's distribution center is located in the city center, and each vehicle can carry up to 80 medical supply units. All deliveries must be completed within 740 minutes to ensure critical supplies reach healthcare facilities in time, and each hospital has specific time windows when they can receive deliveries to match their operational schedules. Vehicles travel at an average speed of 35 km/h within the city, and any two locations can be reached directly by traveling in a straight line. The distribution center serves as the coordinate origin (0, 0), with all coordinates measured in kilometers. Hospital details: 1. Hospital 1 at coordinates (15.0, 0.0): needs 8 units, available between 30-91 minutes, requires 12 minutes for service time; 2. Hospital 2 at coordinates (14.9, 8.2): needs 13 units, available between 45-120 minutes, requires 14 minutes for service time; 3. Hospital 3 at coordinates (10.3, 16.0): needs 12 units, available between 60-128 minutes, requires 14 minutes for service time; 4. Hospital 4 at coordinates (1.5, 20.9): needs 8 units, available between 75-178 minutes, requires 12 minutes for service time; 5. Hospital 5 at coordinates (-9.6, 20.9): needs 7 units, available between 90-187 minutes, requires 12 minutes for service time; 6. Hospital 6 at coordinates (-20.0, 15.0): needs 18 units, available between 105-167 minutes, requires 16 minutes for service time; 7. Hospital 7 at coordinates (-26.7, 3.8): needs 5 units, available between 120-185 minutes, requires 11 minutes for service time; 8. Hospital 8 at coordinates (-27.2, -10.2): needs 11 units, available between 135-209 minutes, requires 13 minutes for service time; 9. Hospital 9 at coordinates (-20.3, -23.5): needs 5 units, available between 150-245 minutes, requires 11 minutes for service time; 10. Hospital 10 at coordinates (-7.0, -32.3): needs 11 units, available between 165-270 minutes, requires 15 minutes for service time; 11. Hospital 11 at coordinates (7.0, -32.3): needs 10 units, available between 180-285 minutes, requires 14 minutes for service time; 12. Hospital 12 at coordinates (20.3, -23.5): needs 12 units, available between 195-300 minutes, requires 16 minutes for service time; 13. Hospital 13 at coordinates (27.2, -10.2): needs 9 units, available between 210-315 minutes, requires 13 minutes for service time; 14. Hospital 14 at coordinates (26.7, 3.8): needs 13 units, available between 225-330 minutes, requires 15 minutes for service time; 15. Hospital 15 at coordinates (20.0, 15.0): needs 7 units, available between 240-345 minutes, requires 12 minutes for service time; 16. Hospital 16 at coordinates (15.6, 42.2): needs 18 units, available between 255-360 minutes, requires 16 minutes for service time; 17. Hospital 17 at coordinates (-15.6, 42.2): needs 6 units, available between 270-375 minutes, requires 11 minutes for service time; 18. Hospital 18 at coordinates (-26.7, 26.7): needs 14 units, available between 285-390 minutes, requires 15 minutes for service time; 19. Hospital 19 at coordinates (-32.3, 7.0): needs 8 units, available between 300-405 minutes, requires 12 minutes for service time; 20. Hospital 20 at coordinates (-32.3, -7.0): needs 12 units, available between 315-420 minutes, requires 14 minutes for service time; 21. Hospital 21 at coordinates (-26.7, -26.7): needs 10 units, available between 330-435 minutes, requires 13 minutes for service time; 22. Hospital 22 at coordinates (-15.6, -42.2): needs 15 units, available between 345-450 minutes, requires 15 minutes for service time; 23. Hospital 23 at coordinates (0.0, -48.0): needs 9 units, available between 360-465 minutes, requires 13 minutes for service time; 24. Hospital 24 at coordinates (15.6, -42.2): needs 11 units, available between 375-480 minutes, requires 14 minutes for service time; 25. Hospital 25 at coordinates (26.7, -26.7): needs 7 units, available between 390-495 minutes, requires 12 minutes for service time; 26. Hospital 26 at coordinates (32.3, -7.0): needs 13 units, available between 405-510 minutes, requires 15 minutes for service time; 27. Hospital 27 at coordinates (32.3, 7.0): needs 8 units, available between 420-525 minutes, requires 12 minutes for service time; 28. Hospital 28 at coordinates (26.7, 26.7): needs 16 units, available between 435-540 minutes, requires 16 minutes for service time; 29. Hospital 29 at coordinates (15.6, 42.2): needs 5 units, available between 450-555 minutes, requires 11 minutes for service time; 30. Hospital 30 at coordinates (0.0, 48.0): needs 10 units, available between 465-570 minutes, requires 13 minutes for service time; 31. Hospital 31 at coordinates (-15.6, 42.2): needs 12 units, available between 480-585 minutes, requires 14 minutes for service time; 32. Hospital 32 at coordinates (-26.7, 26.7): needs 9 units, available between 495-600 minutes, requires 13 minutes for service time; 33. Hospital 33 at coordinates (-32.3, 7.0): needs 14 units, available between 510-615 minutes, requires 15 minutes for service time; 34. Hospital 34 at coordinates (-32.3, -7.0): needs 6 units, available between 525-630 minutes, requires 11 minutes for service time; 35. Hospital 35 at coordinates (-26.7, -26.7): needs 11 units, available between 540-645 minutes, requires 14 minutes for service time; 36. Hospital 36 at coordinates (-15.6, -42.2): needs 8 units, available between 555-660 minutes, requires 12 minutes for service time; 37. Hospital 37 at coordinates (0.0, -48.0): needs 13 units, available between 570-675 minutes, requires 15 minutes for service time; 38. Hospital 38 at coordinates (15.6, -42.2): needs 7 units, available between 585-690 minutes, requires 12 minutes for service time; 39. Hospital 39 at coordinates (26.7, -26.7): needs 10 units, available between 600-705 minutes, requires 13 minutes for service time; 40. Hospital 40 at coordinates (32.3, -7.0): needs 9 units, available between 615-720 minutes, requires 13 minutes for service time. Each hospital must receive exactly one delivery, and no vehicle can exceed its 80-unit capacity. Vehicles must arrive at each hospital within its specified time window; if arriving early, the vehicle must wait until the hospital's available time. The company needs to determine the optimal routes for each vehicle to ensure all critical supplies are delivered on time while minimizing total travel distance. All vehicles must start their routes from the company's distribution center located in the city center and must return to the distribution center after completing their deliveries.",
+  "solution_format_description": "Print the following fields: - routes: for each vehicle, list the complete route sequence. - total_time: maximum completion time among all vehicles. - total_distance: sum of all travel distances. - delivery_vehicle_loads: total packages carried by each vehicle.",
+  "structured_data": {
+    "van_count": 7,
+    "van_capacity": 80,
+    "van_speed": 35.0,
+    "distribution_center": [0, 0, 740],
+    "customers": [
+      [15.0, 0.0, 8, 30, 91, 12],
+      [14.9, 8.2, 13, 45, 120, 14],
+      [10.3, 16.0, 12, 60, 128, 14],
+      [1.5, 20.9, 8, 75, 178, 12],
+      [-9.6, 20.9, 7, 90, 187, 12],
+      [-20.0, 15.0, 18, 105, 167, 16],
+      [-26.7, 3.8, 5, 120, 185, 11],
+      [-27.2, -10.2, 11, 135, 209, 13],
+      [-20.3, -23.5, 5, 150, 245, 11],
+      [-7.0, -32.3, 11, 165, 270, 15],
+      [7.0, -32.3, 10, 180, 285, 14],
+      [20.3, -23.5, 12, 195, 300, 16],
+      [27.2, -10.2, 9, 210, 315, 13],
+      [26.7, 3.8, 13, 225, 330, 15],
+      [20.0, 15.0, 7, 240, 345, 12],
+      [15.6, 42.2, 18, 255, 360, 16],
+      [-15.6, 42.2, 6, 270, 375, 11],
+      [-26.7, 26.7, 14, 285, 390, 15],
+      [-32.3, 7.0, 8, 300, 405, 12],
+      [-32.3, -7.0, 12, 315, 420, 14],
+      [-26.7, -26.7, 10, 330, 435, 13],
+      [-15.6, -42.2, 15, 345, 450, 15],
+      [0.0, -48.0, 9, 360, 465, 13],
+      [15.6, -42.2, 11, 375, 480, 14],
+      [26.7, -26.7, 7, 390, 495, 12],
+      [32.3, -7.0, 13, 405, 510, 15],
+      [32.3, 7.0, 8, 420, 525, 12],
+      [26.7, 26.7, 16, 435, 540, 16],
+      [15.6, 42.2, 5, 450, 555, 11],
+      [0.0, 48.0, 10, 465, 570, 13],
+      [-15.6, 42.2, 12, 480, 585, 14],
+      [-26.7, 26.7, 9, 495, 600, 13],
+      [-32.3, 7.0, 14, 510, 615, 15],
+      [-32.3, -7.0, 6, 525, 630, 11],
+      [-26.7, -26.7, 11, 540, 645, 14],
+      [-15.6, -42.2, 8, 555, 660, 12],
+      [0.0, -48.0, 13, 570, 675, 15],
+      [15.6, -42.2, 7, 585, 690, 12],
+      [26.7, -26.7, 10, 600, 705, 13],
+      [32.3, -7.0, 9, 615, 720, 13]
+    ]
+  },
+  "reference_solution": {
+    "routes": [
+      [0, 1, 2, 3, 0],
+      [0, 6, 9, 10, 13, 14, 21, 22, 23, 0],
+      [0, 7, 8, 18, 17, 19, 20, 16, 0],
+      [0, 4, 5, 11, 12, 15, 24, 25, 0]
+    ],
+    "total_time": 656.30,
+    "total_distance": 483.13,
+    "van_loads": [24, 68, 66, 66]
+  },
+  "solver_code": "",
+  "evaluation_function": "import json\nimport numpy as np\n\ndef evaluate(candidate_solution, structured_data, reference_solution):\n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"routes\", \"total_distance\", \"total_time\"]\n    missing = [f for f in required_fields if f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    routes = solution[\"routes\"]\n    total_distance = solution[\"total_distance\"]\n    total_time = solution[\"total_time\"]\n    \n    van_count = structured_data[\"van_count\"]\n    van_capacity = structured_data[\"van_capacity\"]\n    van_speed = structured_data[\"van_speed\"]\n    dist_center = structured_data[\"distribution_center\"]\n    customers = structured_data[\"customers\"]\n    \n    all_visited = set()\n    for route in routes:\n        if not isinstance(route, list):\n            return {\"is_valid\": False, \"validation_errors\": [\"Each route must be a list\"], \"optimality_score\": 0.0}\n        \n        for customer_id in route:\n            if customer_id == 0:\n                continue\n            if not isinstance(customer_id, int) or customer_id < 1 or customer_id > len(customers):\n                return {\"is_valid\": False, \"validation_errors\": [\"Invalid customer ID\"], \"optimality_score\": 0.0}\n            all_visited.add(customer_id)\n    \n    expected_customers = set(range(1, len(customers) + 1))\n    if all_visited != expected_customers:\n        return {\"is_valid\": False, \"validation_errors\": [\"Not all customers visited\"], \"optimality_score\": 0.0}\n    \n    for k, route in enumerate(routes):\n        total_load = sum(customers[c-1][2] for c in route if c > 0)\n        if total_load > van_capacity:\n            return {\"is_valid\": False, \"validation_errors\": [f\"Van {k} capacity exceeded\"], \"optimality_score\": 0.0}\n    \n    all_points = [[dist_center[0], dist_center[1]]] + [[c[0], c[1]] for c in customers]\n    distance_matrix = np.zeros((len(all_points), len(all_points)))\n    for i in range(len(all_points)):\n        for j in range(len(all_points)):\n            if i != j:\n                dx = all_points[i][0] - all_points[j][0]\n                dy = all_points[i][1] - all_points[j][1]\n                distance_matrix[i][j] = np.sqrt(dx*dx + dy*dy)\n    \n    time_matrix = distance_matrix * 60 / van_speed\n    \n    for k, route in enumerate(routes):\n        if not route:\n            continue\n            \n        current_time = 0\n        current_loc = 0\n        \n        for location_id in route:\n            travel_time = time_matrix[current_loc][location_id]\n            current_time += travel_time\n            \n            if location_id > 0:\n                earliest = customers[location_id-1][3]\n                latest = customers[location_id-1][4]\n                service_time = customers[location_id-1][5]\n                \n                adjusted_arrival = max(current_time, earliest)\n                \n                if adjusted_arrival > latest:\n                    return {\"is_valid\": False, \"validation_errors\": [f\"Time window violation at customer {location_id}\"], \"optimality_score\": 0.0}\n                \n                current_time = adjusted_arrival + service_time\n            current_loc = location_id\n        \n        if current_loc != 0:\n            travel_time = time_matrix[current_loc][0]\n            current_time += travel_time\n        \n        if current_time > dist_center[2]:\n            return {\"is_valid\": False, \"validation_errors\": [f\"Total time constraint violated for van {k}\"], \"optimality_score\": 0.0}\n    \n    optimal_distance = reference_solution[\"total_distance\"]\n    \n    if optimal_distance > 0:\n        optimality_score = max(0, 1 - abs(total_distance - optimal_distance) / optimal_distance)\n    else:\n        optimality_score = 1.0 if total_distance == 0 else 0.0\n    \n    return {\n        \"is_valid\": True,\n        \"validation_errors\": [],\n        \"optimality_score\": optimality_score\n    }"
+}

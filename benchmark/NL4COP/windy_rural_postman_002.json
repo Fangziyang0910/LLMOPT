@@ -1,0 +1,65 @@
+{
+  "problem_id": "windy_rural_postman_002",
+  "metadata": {
+    "problem_type": "Windy Rural Postman Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "An agricultural cooperative needs to design a pesticide spraying route with minimum total operation time for 20 farm plots in a large agricultural region, where prevailing winds significantly affect spraying efficiency and travel times between different areas. The spraying equipment operator must start from farm plot 0, travel along 25 critical access roads that connect essential farm plots, and return to farm plot 0 after completing all spraying operations. Each access road has different travel times depending on the spraying direction due to wind drift concerns and equipment performance. The critical access roads that must be serviced include: from farm plot 0 to plot 1 takes 8 minutes with tailwind and 10 minutes against wind; from plot 1 to 2 takes 6 minutes with tailwind and 7 minutes against wind; from plot 2 to 3 takes 6 minutes with tailwind and 7 minutes against wind; from plot 3 to 4 takes 5 minutes with tailwind and 6 minutes against wind; from plot 4 to 5 takes 9 minutes with tailwind and 11 minutes against wind; from plot 5 to 6 takes 4 minutes with tailwind and 5 minutes against wind; from plot 6 to 7 takes 7 minutes with tailwind and 8 minutes against wind; from plot 7 to 8 takes 6 minutes with tailwind and 7 minutes against wind; from plot 8 to 9 takes 6 minutes with tailwind and 7 minutes against wind; from plot 9 to 10 takes 5 minutes with tailwind and 6 minutes against wind; from plot 10 to 11 takes 7 minutes with tailwind and 8 minutes against wind; from plot 11 to 12 takes 4 minutes with tailwind and 5 minutes against wind; from plot 12 to 13 takes 6 minutes with tailwind and 7 minutes against wind; from plot 13 to 14 takes 6 minutes with tailwind and 7 minutes against wind; from plot 14 to 15 takes 8 minutes with tailwind and 9 minutes against wind; from plot 15 to 16 takes 5 minutes with tailwind and 6 minutes against wind; from plot 16 to 17 takes 7 minutes with tailwind and 8 minutes against wind; from plot 17 to 18 takes 5 minutes with tailwind and 6 minutes against wind; from plot 18 to 19 takes 7 minutes with tailwind and 8 minutes against wind; from plot 19 back to farm plot 0 takes 10 minutes with tailwind and 12 minutes against wind; from plot 1 to 5 takes 8 minutes with tailwind and 9 minutes against wind; from plot 3 to 7 takes 6 minutes with tailwind and 7 minutes against wind; from plot 6 to 10 takes 7 minutes with tailwind and 8 minutes against wind; from plot 8 to 12 takes 5 minutes with tailwind and 6 minutes against wind; and from plot 11 to 15 takes 8 minutes with tailwind and 9 minutes against wind. Additionally, the operator can optionally choose to use 18 service trails to reduce the time spent on repeated travel along the required access roads: from farm plot 0 to plot 3 takes 9 minutes with tailwind and 10 minutes against wind; from plot 2 to 5 takes 7 minutes with tailwind and 8 minutes against wind; from plot 4 to 7 takes 6 minutes with tailwind and 7 minutes against wind; from plot 1 to 9 takes 10 minutes with tailwind and 11 minutes against wind; from plot 5 to 11 takes 8 minutes with tailwind and 9 minutes against wind; from plot 7 to 13 takes 6 minutes with tailwind and 7 minutes against wind; from plot 9 to 15 takes 11 minutes with tailwind and 12 minutes against wind; from plot 11 to 17 takes 7 minutes with tailwind and 8 minutes against wind; from plot 13 to 19 takes 6 minutes with tailwind and 7 minutes against wind; from farm plot 0 to plot 6 takes 12 minutes with tailwind and 13 minutes against wind; from plot 3 to 9 takes 8 minutes with tailwind and 9 minutes against wind; from plot 6 to 12 takes 7 minutes with tailwind and 8 minutes against wind; from plot 9 to 14 takes 7 minutes with tailwind and 8 minutes against wind; from plot 12 to 18 takes 9 minutes with tailwind and 10 minutes against wind; from plot 15 to 19 takes 7 minutes with tailwind and 8 minutes against wind; from plot 2 to 8 takes 10 minutes with tailwind and 11 minutes against wind; from plot 4 to 10 takes 8 minutes with tailwind and 9 minutes against wind; and from plot 14 to 16 takes 6 minutes with tailwind and 7 minutes against wind.",  
+  "solution_format_description": "Print the following fields: - route: array of farm plot indices representing the complete spraying route. - total_time: total operation time of the route.",  
+  "structured_data": {
+    "num_farm_plots": 20,
+    "required_access_roads": [
+      [0, 1, 8, 10], [1, 2, 6, 7], [2, 3, 6, 7], [3, 4, 5, 6],
+      [4, 5, 9, 11], [5, 6, 4, 5], [6, 7, 7, 8], [7, 8, 6, 7],
+      [8, 9, 6, 7], [9, 10, 5, 6], [10, 11, 7, 8], [11, 12, 4, 5],
+      [12, 13, 6, 7], [13, 14, 6, 7], [14, 15, 8, 9], [15, 16, 5, 6],
+      [16, 17, 7, 8], [17, 18, 5, 6], [18, 19, 7, 8], [19, 0, 10, 12],
+      [1, 5, 8, 9], [3, 7, 6, 7], [6, 10, 7, 8], [8, 12, 5, 6],
+      [11, 15, 8, 9]
+    ],
+    "optional_service_trails": [
+      [0, 3, 9, 10], [2, 5, 7, 8], [4, 7, 6, 7], [1, 9, 10, 11],
+      [5, 11, 8, 9], [7, 13, 6, 7], [9, 15, 11, 12], [11, 17, 7, 8],
+      [13, 19, 6, 7], [0, 6, 12, 13], [3, 9, 8, 9], [6, 12, 7, 8],
+      [9, 14, 7, 8], [12, 18, 9, 10], [15, 19, 7, 8], [2, 8, 10, 11],
+      [4, 10, 8, 9], [14, 16, 6, 7]
+    ]
+  },
+  "reference_solution": {
+    "route": [0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    1,
+    5,
+    6,
+    7,
+    3,
+    7,
+    8,
+    9,
+    10,
+    6,
+    10,
+    11,
+    12,
+    8,
+    12,
+    13,
+    14,
+    15,
+    11,
+    15,
+    16,
+    17,
+    18,
+    19,
+    0
+  ],
+  "total_time": 200
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"route\", \"total_time\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        route = solution[\"route\"]\n        total_time = solution[\"total_time\"]\n        required_access_roads = structured_data[\"required_access_roads\"]\n        optional_service_trails = structured_data[\"optional_service_trails\"]\n        errors = []\n        \n        graph = {}\n        for u, v, time_wind, time_against in required_access_roads + optional_service_trails:\n            if u not in graph:\n                graph[u] = {}\n            if v not in graph:\n                graph[v] = {}\n            graph[u][v] = time_wind\n            graph[v][u] = time_against\n        \n        if len(route) < 2:\n            errors.append(\"Spraying route must contain at least 2 farm plots\")\n        \n        if route[0] != 0 or route[-1] != 0:\n            errors.append(\"Spraying route must start and end at farm plot 0\")\n        \n        for i in range(len(route)-1):\n            u, v = route[i], route[i+1]\n            if v not in graph.get(u, {}):\n                errors.append(f\"No access road from farm plot {u} to plot {v}\")\n        \n        covered = set()\n        for i in range(len(route)-1):\n            u, v = route[i], route[i+1]\n            covered.add((u, v))\n            covered.add((v, u))\n        \n        for u, v, _, _ in required_access_roads:\n            if (u, v) not in covered and (v, u) not in covered:\n                errors.append(f\"Required access road {u}<->{v} not covered\")\n        \n        actual_time = 0\n        for i in range(len(route)-1):\n            u, v = route[i], route[i+1]\n            actual_time += graph[u][v]\n        \n        if abs(actual_time - total_time) > 1e-6:\n            errors.append(f\"Operation time inconsistency: calculated {actual_time}, declared {total_time}\")\n        \n        if errors:\n            return {\n                \"is_valid\": False,\n                \"validation_errors\": errors,\n                \"optimality_score\": 0.0\n            }\n        \n        optimal_time = reference_solution[\"total_time\"]\n        if optimal_time == 0:\n            optimality_score = 1.0 if total_time == 0 else 0.0\n        else:\n            gap = abs(optimal_time - total_time) / abs(optimal_time)\n            optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": True,\n            \"validation_errors\": [],\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

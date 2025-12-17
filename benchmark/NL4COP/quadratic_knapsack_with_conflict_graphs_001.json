@@ -1,0 +1,54 @@
+{
+  "problem_id": "quadratic_knapsack_with_conflict_graphs_001",
+  "metadata": {
+    "problem_type": "Quadratic Knapsack Problem with Conflict Graphs",
+    "difficulty": "simple"
+  },
+  "problem_description": "Emily is managing a startup investment portfolio with a strict budget limit of $40,000 and needs to select the most profitable combination of projects. Each project can either be fully funded or not funded at all. The available projects have the following individual expected profits and development time requirements: 1. Project Alpha with profit $12,000 and requirement 80 days; 2. Project Beta with profit $18,000 and requirement 120 days; 3. Project Gamma with profit $14,000 and requirement 100 days; 4. Project Delta with profit $16,000 and requirement 150 days; 5. Project Epsilon with profit $13,000 and requirement 110 days; 6. Project Zeta with profit $20,000 and requirement 180 days; 7. Project Eta with profit $11,000 and requirement 90 days; 8. Project Theta with profit $17,000 and requirement 140 days; 9. Project Iota with profit $15,000 and requirement 70 days; 10. Project Kappa with profit $19,000 and requirement 160 days. When certain projects are selected together, they generate additional synergy bonuses: Alpha-Epsilon ($4,000), Beta-Delta ($6,000), Delta-Eta ($9,000), Epsilon-Theta ($7,000), Zeta-Iota ($9,000), Beta-Eta ($7,000), Delta-Theta ($5,000), Gamma-Iota ($6,000), Epsilon-Kappa ($8,000), Theta-Iota ($8,000), Iota-Kappa ($7,000), Delta-Kappa ($4,000), Epsilon-Iota ($5,000), Theta-Kappa ($6,000). However, some projects are mutually incompatible and cannot be selected together due to specific resource conflicts: Alpha and Delta require similar technical resources, Beta and Theta compete for the same market, Gamma and Zeta share critical equipment, Epsilon and Iota target overlapping customer segments, and Eta and Kappa have conflicting development timelines. How should Emily choose which projects to fund to maximize total profit while staying within the $40,000 budget and respecting all compatibility constraints?",  
+  "solution_format_description": "Print the following fields: - selected_projects: selection status for each project. - total_profit: total expected profit. - total_cost: total development time.",
+  "structured_data": {
+    "projects": [
+      [12000, 80],
+      [18000, 120],
+      [14000, 100],
+      [16000, 150],
+      [13000, 110],
+      [20000, 180],
+      [11000, 90],
+      [17000, 140],
+      [15000, 70],
+      [19000, 160]
+    ],
+    "synergy_values": [
+      [0, 4, 4000],
+      [1, 3, 6000],
+      [3, 6, 9000],
+      [4, 7, 7000],
+      [5, 8, 9000],
+      [1, 6, 7000],
+      [3, 7, 5000],
+      [2, 8, 6000],
+      [4, 9, 8000],
+      [7, 8, 8000],
+      [8, 9, 7000],
+      [3, 9, 4000],
+      [4, 8, 5000],
+      [7, 9, 6000]
+    ],
+    "conflicts": [
+      [0, 3],
+      [1, 7],
+      [2, 5],
+      [4, 8],
+      [6, 9]
+    ],
+    "budget_limit": 40000
+  },
+  "reference_solution": {
+    "selected_projects": [0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+    "total_profit": 72000,
+    "total_cost": 37000
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_projects\", \"total_profit\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected_projects = solution[\"selected_projects\"]\n        total_cost = solution[\"total_cost\"]\n        total_profit = solution[\"total_profit\"]\n        projects = structured_data[\"projects\"]\n        conflicts = structured_data[\"conflicts\"]\n        budget_limit = structured_data[\"budget_limit\"]\n        errors = []\n        \n        if len(selected_projects) != len(projects):\n            errors.append(f\"Array length mismatch: expected {len(projects)}, got {len(selected_projects)}\")\n        \n        if total_cost > budget_limit:\n            errors.append(f\"Budget constraint violated: {total_cost} > {budget_limit}\")\n        \n        for conflict in conflicts:\n            i, j = conflict\n            if selected_projects[i] == 1 and selected_projects[j] == 1:\n                errors.append(f\"Conflict constraint violated: projects {i} and {j} both selected\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_profit = reference_solution[\"total_profit\"]\n            if optimal_profit == 0:\n                optimality_score = 1.0 if total_profit == 0 else 0.0\n            else:\n                gap = abs(optimal_profit - total_profit) / abs(optimal_profit)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

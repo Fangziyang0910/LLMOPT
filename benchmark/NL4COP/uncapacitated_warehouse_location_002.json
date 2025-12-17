@@ -1,0 +1,38 @@
+{
+    "problem_id": "uncapacitated_warehouse_location_002",
+    "metadata": {
+        "problem_type": "Uncapacitated Warehouse Location Problem",
+        "difficulty": "medium"
+    },
+    "problem_description": "A leading online retail platform is expanding its logistics network to improve delivery efficiency. The company is evaluating 3 strategic locations for establishing distribution centers to serve 8 major market areas. Each distribution center requires significant capital investment for construction and setup. Market areas have different projected quarterly order volumes based on historical growth patterns. Transportation costs vary between each potential distribution center and market area due to distance and infrastructure differences. The company needs to determine which distribution centers to establish and how to assign each market area to minimize total quarterly operational costs. This includes both fixed facility costs and variable transportation expenses. Each market area must be served completely by exactly one distribution center. Construction costs are $2150 thousand for Distribution Center Location 1, $1900 thousand for Distribution Center Location 2, and $2400 thousand for Distribution Center Location 3. Market areas have quarterly demands and per-order shipping costs: Market Area 1 has 90 thousand orders with costs $65, $85, $70; Market Area 2 has 110 thousand orders with costs $55, $50, $80; Market Area 3 has 95 thousand orders with costs $75, $90, $55; Market Area 4 has 120 thousand orders with costs $90, $70, $75; Market Area 5 has 80 thousand orders with costs $40, $100, $70; Market Area 6 has 135 thousand orders with costs $85, $60, $65; Market Area 7 has 100 thousand orders with costs $70, $90, $60; Market Area 8 has 90 thousand orders with costs $70, $80, $95 from the three distribution centers respectively.",
+    "solution_format_description": "Print the following fields: - total_cost: total construction and shipping cost. - warehouses_built: which distribution centers are opened. - assignments: market area assignments to distribution centers.",    
+    "structured_data": {
+        "distribution_costs" : [2150, 1900, 2400],
+        "market_areas": [
+            [90, 65, 85, 70],
+            [110, 55, 50, 80],
+            [95, 75, 90, 55],
+            [120, 90, 70, 75],
+            [80, 40, 100, 70],
+            [135, 85, 60, 65],
+            [100, 70, 90, 60],
+            [90, 70, 80, 95]
+        ]
+    },
+    "reference_solution": {
+        "total_cost": 54950,
+        "warehouses_built": [1, 0, 1],
+        "assignments": [
+            [1, 0, 0],
+            [1, 0, 0],
+            [0, 0, 1],
+            [0, 0, 1],
+            [1, 0, 0],
+            [0, 0, 1],
+            [0, 0, 1],
+            [1, 0, 0]
+        ]
+    },
+    "solver_code": "from cpmpy import *\nimport json\n\ndistribution_costs = [2150, 1900, 2400]\nmarket_areas = [\n    [90, 65, 85, 70],\n    [110, 55, 50, 80],\n    [95, 75, 90, 55],\n    [120, 90, 70, 75],\n    [80, 40, 100, 70],\n    [135, 85, 60, 65],\n    [100, 70, 90, 60],\n    [90, 70, 80, 95]\n]\n\nm = len(distribution_costs)\nn = len(market_areas)\n\ndemands = [market_areas[j][0] for j in range(n)]\nshipping_costs = [[market_areas[j][i+1] for i in range(m)] for j in range(n)]\n\nmodel = Model()\n\ncenter_open = boolvar(shape=m)\nassign_market_to_center = boolvar(shape=(n, m))\n\nfor j in range(n):\n    model += sum(assign_market_to_center[j]) == 1\n\nfor j in range(n):\n    for i in range(m):\n        model += assign_market_to_center[j, i] <= center_open[i]\n\ntotal_cost = sum(distribution_costs[i] * center_open[i] for i in range(m))\ntotal_cost += sum(demands[j] * shipping_costs[j][i] * assign_market_to_center[j, i] for j in range(n) for i in range(m))\n\nmodel.minimize(total_cost)\n\nif model.solve():\n    result = {\n        \"total_cost\": total_cost.value(),\n        \"warehouses_built\": [int(center_open[i].value()) for i in range(m)],\n        \"assignments\": [[int(assign_market_to_center[j, i].value()) for i in range(m)] for j in range(n)]\n    }\n    print(json.dumps(result))\nelse:\n    print(\"No solution found\")",
+    "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"total_cost\", \"warehouses_built\", \"assignments\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        total_cost = solution[\"total_cost\"]\n        warehouses_built = solution[\"warehouses_built\"]\n        assignments = solution[\"assignments\"]\n        distribution_costs = structured_data[\"distribution_costs\"]\n        market_areas = structured_data[\"market_areas\"]\n        errors = []\n        \n        m = len(distribution_costs)\n        n = len(market_areas)\n        \n        for j in range(n):\n            assigned_sum = sum(assignments[j])\n            if abs(assigned_sum - 1.0) > 1e-6:\n                errors.append(f\"Market {j} must be assigned to exactly one warehouse (assigned to {assigned_sum} warehouses)\")\n        \n        for j in range(n):\n            for i in range(m):\n                if assignments[j][i] == 1 and warehouses_built[i] != 1:\n                    errors.append(f\"Market {j} assigned to closed warehouse {i}\")\n        \n        for i in range(m):\n            if warehouses_built[i] not in [0, 1]:\n                errors.append(f\"Warehouse {i} decision must be 0 or 1 (got {warehouses_built[i]})\")\n        \n        for j in range(n):\n            for i in range(m):\n                if assignments[j][i] not in [0, 1]:\n                    errors.append(f\"Assignment[{j}][{i}] must be 0 or 1 (got {assignments[j][i]})\")\n        \n        if len(warehouses_built) != m:\n            errors.append(f\"warehouses_built must have length {m} (got {len(warehouses_built)})\")\n            \n        if len(assignments) != n:\n            errors.append(f\"assignments must have {n} rows (got {len(assignments)})\")\n            \n        for j in range(n):\n            if len(assignments[j]) != m:\n                errors.append(f\"assignments[{j}] must have {m} columns (got {len(assignments[j])})\")\n        \n        if len(errors) > 0:\n            return {\n                \"is_valid\": False,\n                \"validation_errors\": errors,\n                \"optimality_score\": 0.0\n            }\n        \n        optimal_cost = reference_solution[\"total_cost\"]\n        if optimal_cost == 0:\n            optimality_score = 1.0 if total_cost == 0 else 0.0\n        else:\n            gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n            optimality_score = max(0, 1 - gap)\n            \n        return {\n            \"is_valid\": True,\n            \"validation_errors\": [],\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

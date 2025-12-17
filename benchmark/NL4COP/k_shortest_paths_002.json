@@ -1,0 +1,65 @@
+{
+  "problem_id": "k_shortest_paths_002",
+  "metadata": {
+    "problem_type": "k-Shortest Paths Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A power company operates an electrical grid with 20 substations: a main power plant, 18 intermediate substations, and a critical industrial zone. The grid contains 35 directed power transmission lines with varying loss rates. From the main plant, lines connect to substations 1, 2, and 3 with losses of 3%, 5%, and 2% respectively. The first tier of substations 1, 2, and 3 each connect to two second-tier substations: substation 1 connects to substations 4 and 5 with 4% and 3% loss, substation 2 connects to substations 6 and 7 with 2% and 6% loss, and substation 3 connects to substations 8 and 9 with 3% and 4% loss. The second tier continues branching: substation 4 connects to substations 10 and 11 with 2% and 5% loss, substation 5 connects to substations 12 and 13 with 3% and 4% loss, substation 6 connects to substations 14 and 15 with 2% and 3% loss, and substation 7 connects to substations 16 and 17 with 4% and 5% loss. Substation 8 connects to substation 18 with 3% loss and directly to the industrial zone with 2% loss, while substation 9 connects directly to the industrial zone with 3% loss. Additional cross-connections exist: substation 10 to substation 14 with 4% loss, substation 11 to substation 15 with 2% loss, substation 12 to substation 16 with 3% loss, substation 13 to substation 17 with 4% loss, substation 14 to substation 18 with 2% loss, substation 15 to the industrial zone with 3% loss, substation 16 to substation 18 with 4% loss, and substation 17 to the industrial zone with 2% loss. Further backup connections include substation 1 to substation 6 with 5% loss, substation 2 to substation 8 with 4% loss, substation 3 to substation 7 with 3% loss, substation 4 to substation 12 with 6% loss, substation 5 to substation 13 with 2% loss, substation 10 to substation 16 with 3% loss, substation 11 to substation 17 with 4% loss, and substation 12 to substation 18 with 2% loss. Each valid transmission route must follow the directional power flow, start at the main plant, end at the industrial zone, and visit each substation at most once. The company needs to find exactly 8 distinct transmission routes ranked from lowest to highest total transmission loss to ensure reliable power supply and provide backup options.",
+  "solution_format_description": "Print the following fields: - paths: transmission routes from power plant to industrial zone. - total_losses: total power loss percentage for each route.",
+  "structured_data": {
+    "transmission_lines": [
+      [0, 1, 3],
+      [0, 2, 5],
+      [0, 3, 2],
+      [1, 4, 4],
+      [1, 5, 3],
+      [2, 6, 2],
+      [2, 7, 6],
+      [3, 8, 3],
+      [3, 9, 4],
+      [4, 10, 2],
+      [4, 11, 5],
+      [5, 12, 3],
+      [5, 13, 4],
+      [6, 14, 2],
+      [6, 15, 3],
+      [7, 16, 4],
+      [7, 17, 5],
+      [8, 18, 3],
+      [8, 19, 2],
+      [9, 19, 3],
+      [10, 14, 4],
+      [11, 15, 2],
+      [12, 16, 3],
+      [13, 17, 4],
+      [14, 18, 2],
+      [15, 19, 3],
+      [16, 18, 4],
+      [17, 19, 2],
+      [1, 6, 5],
+      [2, 8, 4],
+      [3, 7, 3],
+      [4, 12, 6],
+      [5, 13, 2],
+      [10, 16, 3],
+      [11, 17, 4],
+      [12, 18, 2]
+    ],
+    "required_routes": 8
+  },
+  "reference_solution": {
+    "paths": [
+      [0, 3, 8, 19],
+      [0, 3, 9, 19],
+      [0, 2, 8, 19],
+      [0, 3, 7, 17, 19],
+      [0, 2, 6, 15, 19],
+      [0, 1, 6, 15, 19],
+      [0, 1, 5, 13, 17, 19],
+      [0, 1, 4, 11, 15, 19]
+    ],
+    "total_losses": [7, 9, 11, 12, 13, 14, 14, 17]
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"paths\", \"total_losses\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        paths = solution[\"paths\"]\n        total_losses = solution[\"total_losses\"]\n        transmission_lines = structured_data[\"transmission_lines\"]\n        required_routes = structured_data[\"required_routes\"]\n        errors = []\n        \n        if len(paths) != len(total_losses):\n            errors.append(f\"Paths and losses length mismatch: {len(paths)} vs {len(total_losses)}\")\n        \n        if len(paths) > required_routes:\n            errors.append(f\"Too many paths: {len(paths)}, maximum allowed: {required_routes}\")\n        \n        adj = {}\n        for u, v, loss in transmission_lines:\n            if u not in adj:\n                adj[u] = {}\n            adj[u][v] = loss\n        \n        for i, path in enumerate(paths):\n            if len(path) == 0:\n                errors.append(f\"Path {i} is empty\")\n                continue\n                \n            if path[0] != 0:\n                errors.append(f\"Path {i} does not start at source node 0: starts at {path[0]}\")\n            \n            if path[-1] != 19:\n                errors.append(f\"Path {i} does not end at target node 19: ends at {path[-1]}\")\n            \n            actual_loss = 0\n            for j in range(len(path) - 1):\n                u, v = path[j], path[j + 1]\n                if u not in adj or v not in adj[u]:\n                    errors.append(f\"Path {i} has invalid segment: {u} -> {v} (no direct connection)\")\n                    break\n                actual_loss += adj[u][v]\n            \n            if i < len(total_losses):\n                if abs(actual_loss - total_losses[i]) > 1e-6:\n                    errors.append(f\"Path {i} loss mismatch: calculated {actual_loss}, declared {total_losses[i]}\")\n            \n            if len(path) != len(set(path)):\n                errors.append(f\"Path {i} is not a simple path: contains repeated nodes\")\n        \n        unique_paths = []\n        for i, path in enumerate(paths):\n            path_tuple = tuple(path)\n            if path_tuple in unique_paths:\n                errors.append(f\"Path {i} is a duplicate of another path\")\n            else:\n                unique_paths.append(path_tuple)\n        \n        if not errors and len(paths) > 0:\n            optimal_losses = reference_solution[\"total_losses\"]\n            candidate_losses = total_losses[:len(optimal_losses)]\n            \n            total_optimal = sum(optimal_losses)\n            total_candidate = sum(candidate_losses)\n            \n            if total_optimal == 0:\n                optimality_score = 1.0 if total_candidate == 0 else 0.0\n            else:\n                gap = abs(total_optimal - total_candidate) / total_optimal\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

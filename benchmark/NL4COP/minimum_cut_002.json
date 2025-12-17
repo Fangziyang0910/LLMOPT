@@ -1,0 +1,50 @@
+{
+  "problem_id": "minimum_cut_002",
+  "metadata": {
+    "problem_type": "Minimum Cut Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A regional oil pipeline network spans 20 pumping stations connected by 29 transmission pipes with varying throughput capacities measured in thousands of barrels per day. Oil can only flow in the specified direction through each pipe, and each pipe must either be fully open or fully closed. The network operator needs to identify the most vulnerable pipeline segments whose disruption would completely halt oil flow from the main refinery to the distribution center. The network connections are structured as follows: From the main refinery, oil flows to station 1 with a throughput capacity of 12 thousand barrels per day, to station 2 with a throughput capacity of 8 thousand barrels per day, and to station 3 with a throughput capacity of 15 thousand barrels per day. In the next layer, station 1 connects to station 4 with a throughput capacity of 6 thousand barrels per day and to station 5 with a throughput capacity of 10 thousand barrels per day. Station 2 connects to station 5 with a throughput capacity of 7 thousand barrels per day and to station 6 with a throughput capacity of 9 thousand barrels per day. Station 3 connects to station 6 with a throughput capacity of 11 thousand barrels per day and to station 7 with a throughput capacity of 5 thousand barrels per day. In the following layer, station 4 connects to station 8 with a throughput capacity of 8 thousand barrels per day and to station 9 with a throughput capacity of 13 thousand barrels per day. Station 5 connects to station 9 with a throughput capacity of 6 thousand barrels per day and to station 10 with a throughput capacity of 14 thousand barrels per day. Station 6 connects to station 10 with a throughput capacity of 7 thousand barrels per day and to station 11 with a throughput capacity of 9 thousand barrels per day. Station 7 connects to station 11 with a throughput capacity of 12 thousand barrels per day and to station 12 with a throughput capacity of 8 thousand barrels per day. Continuing the network, station 8 connects to station 13 with a throughput capacity of 10 thousand barrels per day. Station 9 connects to station 13 with a throughput capacity of 7 thousand barrels per day and to station 14 with a throughput capacity of 11 thousand barrels per day. Station 10 connects to station 14 with a throughput capacity of 6 thousand barrels per day and to station 15 with a throughput capacity of 13 thousand barrels per day. Station 11 connects to station 15 with a throughput capacity of 9 thousand barrels per day. Station 12 connects to station 16 with a throughput capacity of 15 thousand barrels per day. Station 13 connects to station 17 with a throughput capacity of 8 thousand barrels per day. Station 14 connects to station 17 with a throughput capacity of 12 thousand barrels per day. Station 15 connects to station 18 with a throughput capacity of 10 thousand barrels per day. Finally, station 16 connects to the distribution center with a throughput capacity of 14 thousand barrels per day, station 17 connects to the distribution center with a throughput capacity of 9 thousand barrels per day, and station 18 connects to the distribution center with a throughput capacity of 11 thousand barrels per day. The operator needs to determine which combination of pipelines with the minimum total capacity, when shut down, would completely prevent any oil from reaching the distribution center.",
+  "solution_format_description": "Print the following fields: - critical_pipes: pipelines to cut for minimum cut. - min_cut_capacity: total capacity of cut pipelines.",
+  "structured_data": {
+    "num_stations": 20,
+    "pipelines": [
+      [0, 1, 12],
+      [0, 2, 8],
+      [0, 3, 15],
+      [1, 4, 6],
+      [1, 5, 10],
+      [2, 5, 7],
+      [2, 6, 9],
+      [3, 6, 11],
+      [3, 7, 5],
+      [4, 8, 8],
+      [4, 9, 13],
+      [5, 9, 6],
+      [5, 10, 14],
+      [6, 10, 7],
+      [6, 11, 9],
+      [7, 11, 12],
+      [7, 12, 8],
+      [8, 13, 10],
+      [9, 13, 7],
+      [9, 14, 11],
+      [10, 14, 6],
+      [10, 15, 13],
+      [11, 15, 9],
+      [12, 16, 15],
+      [13, 17, 8],
+      [14, 17, 12],
+      [15, 18, 10],
+      [16, 19, 14],
+      [17, 19, 9],
+      [18, 19, 11]
+    ]
+  },
+  "reference_solution": {
+    "critical_pipes": [8, 26, 28],
+    "min_cut_capacity": 24
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nnum_stations = 20\npipelines = [\n    [0, 1, 12],\n    [0, 2, 8],\n    [0, 3, 15],\n    [1, 4, 6],\n    [1, 5, 10],\n    [2, 5, 7],\n    [2, 6, 9],\n    [3, 6, 11],\n    [3, 7, 5],\n    [4, 8, 8],\n    [4, 9, 13],\n    [5, 9, 6],\n    [5, 10, 14],\n    [6, 10, 7],\n    [6, 11, 9],\n    [7, 11, 12],\n    [7, 12, 8],\n    [8, 13, 10],\n    [9, 13, 7],\n    [9, 14, 11],\n    [10, 14, 6],\n    [10, 15, 13],\n    [11, 15, 9],\n    [12, 16, 15],\n    [13, 17, 8],\n    [14, 17, 12],\n    [15, 18, 10],\n    [16, 19, 14],\n    [17, 19, 9],\n    [18, 19, 11]\n]\n\nsource = 0\nsink = 19\n\npipeline_in_cut = boolvar(shape=len(pipelines))\nstation_side = boolvar(shape=num_stations)\n\nmodel = Model()\nmodel += station_side[source] == 0\nmodel += station_side[sink] == 1\n\nfor i, (u, v, capacity) in enumerate(pipelines):\n    model += pipeline_in_cut[i] >= station_side[v] - station_side[u]\n\ntotal_cut_capacity = sum(pipelines[i][2] * pipeline_in_cut[i] for i in range(len(pipelines)))\nmodel.minimize(total_cut_capacity)\n\nif model.solve():\n    critical_pipelines = [i for i in range(len(pipelines)) if pipeline_in_cut[i].value()]\n    result = {\n        \"critical_pipes\": critical_pipelines,\n        \"min_cut_capacity\": total_cut_capacity.value()\n    }\n    print(json.dumps(result))\nelse:\n    print(\"No solution found\")",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"critical_pipes\", \"min_cut_capacity\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        critical_pipes = solution[\"critical_pipes\"]\n        min_cut_capacity = solution[\"min_cut_capacity\"]\n        pipelines = structured_data[\"pipelines\"]\n        num_stations = structured_data[\"num_stations\"]\n        \n        errors = []\n        \n        if not isinstance(critical_pipes, list):\n            errors.append(\"critical_pipes must be an array\")\n        \n        if not isinstance(min_cut_capacity, (int, float)):\n            errors.append(\"min_cut_capacity must be a number\")\n        \n        for pipe_idx in critical_pipes:\n            if not isinstance(pipe_idx, int) or pipe_idx < 0 or pipe_idx >= len(pipelines):\n                errors.append(f\"Invalid pipe index: {pipe_idx}\")\n        \n        calculated_capacity = sum(pipelines[i][2] for i in critical_pipes if 0 <= i < len(pipelines))\n        if abs(calculated_capacity - min_cut_capacity) > 1e-6:\n            errors.append(f\"Capacity inconsistency: calculated {calculated_capacity}, declared {min_cut_capacity}\")\n        \n        adjacency = [[] for _ in range(num_stations)]\n        for i, (u, v, capacity) in enumerate(pipelines):\n            if i not in critical_pipes:\n                adjacency[u].append(v)\n        \n        from collections import deque\n        visited = [False] * num_stations\n        queue = deque([0])\n        visited[0] = True\n        found_path = False\n        \n        while queue and not found_path:\n            node = queue.popleft()\n            if node == num_stations - 1:\n                found_path = True\n                break\n            for neighbor in adjacency[node]:\n                if not visited[neighbor]:\n                    visited[neighbor] = True\n                    queue.append(neighbor)\n        \n        if found_path:\n            errors.append(\"Cut does not separate source from sink - path still exists\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_capacity = reference_solution[\"min_cut_capacity\"]\n            if optimal_capacity == 0:\n                optimality_score = 1.0 if min_cut_capacity == 0 else 0.0\n            else:\n                gap = abs(optimal_capacity - min_cut_capacity) / abs(optimal_capacity)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

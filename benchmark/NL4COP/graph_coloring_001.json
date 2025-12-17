@@ -1,0 +1,39 @@
+{
+  "problem_id": "graph_coloring_001",
+  "metadata": {
+    "problem_type": "Graph Coloring Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "Within the strategic operational framework of the Global Wireless Infrastructure Consortium, a sophisticated frequency resource optimization paradigm is being deployed for a metropolitan cellular communications infrastructure comprising ten strategically positioned towers distributed throughout an urban geographical topology. The consortium's advanced network management systems have identified intricate conflict relationship patterns that preclude frequency co-utilization among geographically proximate tower infrastructure elements. The complex spatial constraint matrix reveals that towers exhibiting mutual conflict relationships must be allocated distinct frequency assignments to preserve signal integrity and maintain optimal network performance characteristics. The comprehensive network topology analysis has systematically determined that the following tower pair configurations experience conflict interactions: towers 1 and 2 demonstrate mutual incompatibility, towers 2 and 3 exhibit conflict relationships, towers 1 and 3 share mutual constraints, towers 4 and 5 experience interference patterns, towers 5 and 6 demonstrate conflict interactions, towers 6 and 7 exhibit mutual incompatibility, towers 4 and 7 experience reciprocal conflicts, towers 1 and 4 demonstrate cross-cluster interference, towers 3 and 6 experience conflict relationships, tower 8 exhibits conflict patterns with towers 1, 5, and 9, tower 9 demonstrates incompatibility with towers 2, 7, and 10, and tower 10 experiences conflict interactions with towers 3, 6, and 4. Each tower infrastructure component must be allocated exactly one frequency assignment, represented by a positive integer designation corresponding to a specific spectral band allocation. The consortium's optimization methodology seeks to determine the minimal cardinality set of distinct frequency assignments that satisfies all conflict relationship constraints while maximizing spectral utilization efficiency and optimizing network resource deployment parameters.",
+  "solution_format_description": "Print the following fields: - tower_frequencies: frequency assignment for each tower. - num_frequencies: total number of different frequencies used.",  
+  "structured_data": {
+    "num_towers": 10,
+    "num_conflict_pairs": 18,
+    "conflict_pairs": [
+      [1, 2],
+      [2, 3],
+      [3, 1],
+      [4, 5],
+      [5, 6],
+      [6, 7],
+      [7, 4],
+      [1, 4],
+      [3, 6],
+      [8, 1],
+      [8, 5],
+      [8, 9],
+      [9, 2],
+      [9, 7],
+      [9, 10],
+      [10, 3],
+      [10, 6],
+      [10, 4]
+    ]
+  },
+  "reference_solution": {
+    "tower_frequencies": [1, 3, 2, 2, 1, 3, 1, 3, 2, 1],
+    "num_frequencies": 3
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nnum_towers = 10\nconflict_pairs = [\n    [1, 2], [2, 3], [3, 1],\n    [4, 5], [5, 6], [6, 7], [7, 4],\n    [1, 4], [3, 6],\n    [8, 1], [8, 5], [8, 9],\n    [9, 2], [9, 7], [9, 10],\n    [10, 3], [10, 6], [10, 4]\n]\n\nmodel = Model()\ntower_frequencies = intvar(1, num_towers, shape=num_towers)\n\nfor u, v in conflict_pairs:\n    model += tower_frequencies[u-1] != tower_frequencies[v-1]\n\nnum_frequencies = intvar(1, num_towers)\nfor i in range(num_towers):\n    model += num_frequencies >= tower_frequencies[i]\nmodel.minimize(num_frequencies)\n\nif model.solve():\n    result = {\n        \"tower_frequencies\": [int(tower_frequencies[i].value()) for i in range(num_towers)],\n        \"num_frequencies\": int(num_frequencies.value())\n    }\n    print(json.dumps(result))",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"tower_frequencies\", \"num_frequencies\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        tower_frequencies = solution[\"tower_frequencies\"]\n        num_frequencies = solution[\"num_frequencies\"]\n        num_towers = structured_data[\"num_towers\"]\n        conflict_pairs = structured_data[\"conflict_pairs\"]\n        errors = []\n        \n        if len(tower_frequencies) != num_towers:\n            errors.append(f\"tower_frequencies length mismatch: expected {num_towers}, got {len(tower_frequencies)}\")\n        \n        for i, freq in enumerate(tower_frequencies):\n            if not isinstance(freq, int) or freq < 1:\n                errors.append(f\"Invalid frequency for tower {i+1}: {freq}. Frequencies must be positive integers.\")\n        \n        for u, v in conflict_pairs:\n            if 1 <= u <= num_towers and 1 <= v <= num_towers:\n                if tower_frequencies[u-1] == tower_frequencies[v-1]:\n                    errors.append(f\"Conflicting towers {u} and {v} share the same frequency {tower_frequencies[u-1]}\")\n        \n        if len(tower_frequencies) > 0:\n            actual = set(tower_frequencies)\n            actual_num = len(actual)\n            if num_frequencies != actual_num:\n                errors.append(f\"Frequency count inconsistency: declared {num_frequencies}, actual {actual_num}\")\n        \n        if len(errors) == 0:\n            optimal = reference_solution[\"num_frequencies\"]\n            if optimal == 0:\n                optimality_score = 1.0 if num_frequencies == 0 else 0.0\n            else:\n                gap = abs(optimal - num_frequencies) / abs(optimal)\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

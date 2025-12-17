@@ -1,0 +1,55 @@
+{
+  "problem_id": "travelling_thief_problem_002",
+  "metadata": {
+    "problem_type": "Travelling Thief Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A book reseller is setting out from their home to visit seven bookstores to purchase valuable books for resale. The home serves as the starting point at coordinates (0, 0), with all distances measured in kilometers. The bookstores and their available books are: Store 1 at coordinates (4.5, 7.8) has three books: rare first edition (profit 34 yuan, 0.4 kg), signed novel (profit 12 yuan, 0.2 kg), and illustrated anthology (profit 56 yuan, 0.6 kg); Store 2 at coordinates (12.3, 8.9) has three books: academic textbook (profit 67 yuan, 0.7 kg), collector's guide (profit 90 yuan, 1.0 kg), and historical memoir (profit 89 yuan, 0.9 kg); Store 3 at coordinates (6.2, 11.5) has three books: poetry collection (profit 23 yuan, 0.3 kg), scientific journal (profit 34 yuan, 0.4 kg), and art catalog (profit 34 yuan, 0.4 kg); Store 4 at coordinates (9.8, 3.4) has three books: philosophy treatise (profit 67 yuan, 0.7 kg), literary criticism (profit 89 yuan, 0.9 kg), and biography volume (profit 67 yuan, 0.7 kg); Store 5 at coordinates (15.6, 7.2) has three books: technical manual (profit 45 yuan, 0.5 kg), reference dictionary (profit 45 yuan, 0.5 kg), and language textbook (profit 45 yuan, 0.5 kg); Store 6 at coordinates (3.4, 9.8) has three books: children's storybook (profit 23 yuan, 0.3 kg), coffee table book (profit 78 yuan, 0.8 kg), and photography collection (profit 78 yuan, 0.8 kg); Store 7 at coordinates (8.1, 5.6) has two books: antique atlas (profit 45 yuan, 0.5 kg) and manuscript facsimile (profit 78 yuan, 0.8 kg). The reseller must start from home, visit each bookstore exactly once, and then return home. All locations can be reached by straight-line travel. The reseller can only carry up to 4.0 kg of books in their bag. The reseller's cycling speed changes linearly with the weight they're carrying - moving at 20.0 km/h when completely unburdened, and slowing down proportionally as more weight is added, reaching exactly 12.0 km/h when carrying the full 4.0 kg capacity. The reseller has to pay travel costs of 10 yuan for each hour they spend on the road, which covers their transportation and time costs during the trip. Books can only be purchased from their original stores, and each book can either be bought or left behind (no partial selections). The total weight of purchased books must not exceed 4.0 kg. Which books should the book reseller purchase and which route should they take to maximize their net profit?",
+  "solution_format_description": "Print the following fields: - route: complete route visiting all stores. - purchased_books: selected books. - total_weight: total weight of purchased books. - total_time: total travel time. - net_profit: total book profit minus travel cost.",  
+  "structured_data": {
+    "stores": [
+      [4.5, 7.8],
+      [12.3, 8.9],
+      [6.2, 11.5],
+      [9.8, 3.4],
+      [15.6, 7.2],
+      [3.4, 9.8],
+      [8.1, 5.6]
+    ],
+    "books": [
+      [34, 0.4, 1],
+      [12, 0.2, 1],
+      [56, 0.6, 1],
+      [67, 0.7, 2],
+      [90, 1.0, 2],
+      [89, 0.9, 2],
+      [23, 0.3, 3],
+      [34, 0.4, 3],
+      [34, 0.4, 3],
+      [67, 0.7, 4],
+      [89, 0.9, 4],
+      [67, 0.7, 4],
+      [45, 0.5, 5],
+      [45, 0.5, 5],
+      [45, 0.5, 5],
+      [23, 0.3, 6],
+      [78, 0.8, 6],
+      [78, 0.8, 6],
+      [45, 0.5, 7],
+      [78, 0.8, 7]
+    ],
+    "bag_capacity": 4.0,
+    "min_speed": 12.0,
+    "max_speed": 20.0,
+    "travel_cost_per_hour": 10
+  },
+  "reference_solution": {
+    "route": [0, 1, 6, 3, 2, 5, 4, 7, 0],
+    "purchased_books": [6, 10, 11, 12, 20],
+    "total_weight": 4.0,
+    "total_time": 2.67,
+    "net_profit": 363.30
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"route\", \"purchased_books\", \"total_weight\", \"total_time\", \"net_profit\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        route = solution[\"route\"]\n        purchased_books = solution[\"purchased_books\"]\n        total_weight = solution[\"total_weight\"]\n        \n        stores = structured_data[\"stores\"]\n        books = structured_data[\"books\"]\n        bag_capacity = structured_data[\"bag_capacity\"]\n        \n        errors = []\n        \n        if len(route) != 9:\n            errors.append(f\"Route must have 9 positions (start, 7 stores, end), got {len(route)}\")\n        \n        if route[0] != 0 or route[-1] != 0:\n            errors.append(\"Route must start and end at home (0)\")\n        \n        visited_stores = route[1:-1]\n        if set(visited_stores) != set(range(1, 8)):\n            errors.append(\"Route must visit each store exactly once\")\n        \n        if total_weight > bag_capacity:\n            errors.append(f\"Weight constraint violated: {total_weight} > {bag_capacity}\")\n        \n        valid_book_ids = set(range(1, len(books) + 1))\n        for book_id in purchased_books:\n            if book_id not in valid_book_ids:\n                errors.append(f\"Invalid book ID: {book_id}\")\n        \n        for book_id in purchased_books:\n            book_store = books[book_id - 1][2]\n            if book_store not in visited_stores:\n                errors.append(f\"Book {book_id} from store {book_store} is purchased but store {book_store} is not visited\")\n        \n        if len(errors) == 0:\n            if \"net_profit\" in solution:\n                optimal_value = reference_solution[\"net_profit\"]\n                candidate_value = solution[\"net_profit\"]\n                \n                if optimal_value == 0:\n                    optimality_score = 1.0 if candidate_value == 0 else 0.0\n                else:\n                    gap = abs(optimal_value - candidate_value) / abs(optimal_value)\n                    optimality_score = max(0, 1 - gap)\n            else:\n                optimality_score = 0.0\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}\n"
+}

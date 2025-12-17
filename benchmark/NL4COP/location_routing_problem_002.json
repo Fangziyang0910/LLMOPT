@@ -1,0 +1,43 @@
+{
+  "problem_id": "location_routing_problem_002",
+  "metadata": {
+    "problem_type": "Location-Routing Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "A fast-growing food delivery startup needs to establish kitchen hubs and delivery routes for serving 10 neighborhoods in a city. All locations are measured in kilometers from the city center. All locations are directly accessible from each other. The startup has identified 3 potential locations for kitchen hubs: Location (30, 30) with setup cost $1000 and capacity 80 meals, Location (70, 50) with setup cost $1200 and capacity 90 meals, and Location (50, 70) with setup cost $1500 and capacity 100 meals. Each kitchen hub's daily cooking capacity cannot be exceeded. The 10 neighborhoods are located at different coordinates across the city with specific daily meal order volumes that must be exactly met: Neighborhood 1 at (25, 35) needs 15 meals daily, Neighborhood 2 at (45, 65) needs 12 meals daily, Neighborhood 3 at (65, 25) needs 18 meals daily, Neighborhood 4 at (85, 75) needs 10 meals daily, Neighborhood 5 at (15, 85) needs 14 meals daily, Neighborhood 6 at (75, 15) needs 16 meals daily, Neighborhood 7 at (35, 55) needs 13 meals daily, Neighborhood 8 at (55, 45) needs 11 meals daily, Neighborhood 9 at (95, 35) needs 17 meals daily, and Neighborhood 10 at (25, 75) needs 19 meals daily. The company uses delivery vehicles that can transport up to 40 meals per trip, with each vehicle costing $200 to operate per day plus $8 per kilometer of travel distance. Each delivery vehicle must start from its assigned kitchen hub, serve its designated neighborhoods, and return to the same hub, ensuring every neighborhood is served exactly once. The total cost includes kitchen setup costs, vehicle operating costs, and transportation costs. The startup needs to decide which kitchen hubs to open and how to organize delivery routes to serve all neighborhoods with minimal total cost.",
+  "solution_format_description": "Print the following fields: - opened_kitchens: which kitchen hubs are open. - delivery_routes: delivery routes for each vehicle with kitchen, neighborhoods, and meals. - total_cost: total cost including setup and transportation.",
+  "structured_data": {
+    "neighborhoods": [
+      [25, 35, 15],
+      [45, 65, 12],
+      [65, 25, 18],
+      [85, 75, 10],
+      [15, 85, 14],
+      [75, 15, 16],
+      [35, 55, 13],
+      [55, 45, 11],
+      [95, 35, 17],
+      [25, 75, 19]
+    ],
+    "kitchen_hubs": [
+      [30, 30, 1000, 80],
+      [70, 50, 1200, 90],
+      [50, 70, 1500, 100]
+    ],
+    "meal_capacity_per_vehicle": 40,
+    "vehicle_operating_cost": 200,
+    "transport_cost_per_km": 8
+  },
+  "reference_solution": {
+    "opened_kitchens": [0, 1],
+    "delivery_routes": [
+      [0, [4, 9], 33],
+      [0, [0, 1, 6], 40],
+      [1, [2, 5], 34],
+      [1, [3, 7, 8], 38]
+    ],
+    "total_cost": 6204.0113107818615
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"opened_kitchens\", \"delivery_routes\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        opened_kitchens = solution[\"opened_kitchens\"]\n        delivery_routes = solution[\"delivery_routes\"]\n        total_cost = solution[\"total_cost\"]\n        \n        neighborhoods = structured_data[\"neighborhoods\"]\n        kitchen_hubs = structured_data[\"kitchen_hubs\"]\n        vehicle_capacity = structured_data[\"meal_capacity_per_vehicle\"]\n        \n        errors = []\n        \n        served_neighborhoods = set()\n        for route in delivery_routes:\n            route_neighborhoods = route[1]\n            for n in route_neighborhoods:\n                if n in served_neighborhoods:\n                    errors.append(f\"Neighborhood {n} is served multiple times\")\n                served_neighborhoods.add(n)\n        \n        all_neighborhoods = set(range(len(neighborhoods)))\n        unserved_neighborhoods = all_neighborhoods - served_neighborhoods\n        if unserved_neighborhoods:\n            errors.append(f\"Neighborhoods not served: {unserved_neighborhoods}\")\n        \n        for i, route in enumerate(delivery_routes):\n            meals_delivered = route[2]\n            if meals_delivered > vehicle_capacity:\n                errors.append(f\"Route {i} exceeds vehicle capacity: {meals_delivered} > {vehicle_capacity}\")\n        \n        kitchen_loads = {k: 0 for k in opened_kitchens}\n        for route in delivery_routes:\n            kitchen_id = route[0]\n            meals_delivered = route[2]\n            kitchen_loads[kitchen_id] += meals_delivered\n        \n        for kitchen_id, load in kitchen_loads.items():\n            capacity = kitchen_hubs[kitchen_id][3]\n            if load > capacity:\n                errors.append(f\"Kitchen {kitchen_id} capacity exceeded: {load} > {capacity}\")\n        \n        for route in delivery_routes:\n            kitchen_id = route[0]\n            if kitchen_id not in opened_kitchens:\n                errors.append(f\"Route uses unopened kitchen {kitchen_id}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_cost = reference_solution[\"total_cost\"]\n            if optimal_cost == 0:\n                optimality_score = 1.0 if total_cost == 0 else 0.0\n            else:\n                gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

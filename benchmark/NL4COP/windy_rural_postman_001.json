@@ -1,0 +1,36 @@
+{
+  "problem_id": "windy_rural_postman_001",
+  "metadata": {
+    "problem_type": "Windy Rural Postman Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A postal service needs to design a mail delivery route with minimum total travel time for a rural area with 1 post office and 6 delivery points affected by significant wind conditions. The mail carrier must start from the post office, travel along the 8 required road segments that connect the delivery points, and return to the post office after completing deliveries. Each road segment has different travel times depending on travel direction due to wind conditions. The 8 required road segments that must be traveled are: traveling from the post office to delivery point 1 takes 8 minutes with wind and 12 minutes against wind; traveling from delivery point 1 to 2 takes 6 minutes with wind and 9 minutes against wind; traveling from delivery point 2 to 3 takes 7 minutes with wind and 10 minutes against wind; traveling from delivery point 3 to 4 takes 5 minutes with wind and 8 minutes against wind; traveling from delivery point 4 to 5 takes 9 minutes with wind and 13 minutes against wind; traveling from delivery point 5 to 6 takes 4 minutes with wind and 6 minutes against wind; traveling from delivery point 6 to the post office takes 11 minutes with wind and 7 minutes against wind; traveling from delivery point 1 to 4 takes 3 minutes with wind and 5 minutes against wind. Additionally, the mail carrier can optionally choose to use 8 smaller roads to reduce the time spent on repeated travel along the required road segments: traveling from the post office to delivery point 2 takes 12 minutes with wind and 10 minutes against wind; traveling from delivery point 1 to 3 takes 8 minutes with wind and 11 minutes against wind; traveling from delivery point 2 to 5 takes 6 minutes with wind and 8 minutes against wind; traveling from delivery point 3 to 6 takes 9 minutes with wind and 7 minutes against wind; traveling from delivery point 4 to the post office takes 13 minutes with wind and 15 minutes against wind; traveling from delivery point 5 to 1 takes 7 minutes with wind and 9 minutes against wind; traveling from delivery point 6 to 2 takes 10 minutes with wind and 12 minutes against wind; traveling from delivery point 3 to 1 takes 11 minutes with wind and 8 minutes against wind.",
+  "solution_format_description": "Print the following fields: - route: array of point indices representing the complete delivery route. - total_time: total travel time of the route.",  
+  "structured_data": {
+    "num_points": 7,
+    "mandatory_routes": [
+      [0, 1, 5, 7],
+      [1, 2, 3, 4],
+      [2, 3, 6, 5],
+      [3, 4, 4, 6],
+      [4, 5, 7, 8],
+      [5, 6, 5, 4],
+      [6, 0, 8, 6],
+      [1, 4, 4, 5]
+    ],
+    "alternative_routes": [
+      [0, 2, 9, 8],
+      [1, 3, 6, 7],
+      [2, 5, 5, 6],
+      [3, 6, 7, 5],
+      [4, 0, 8, 9],
+      [5, 1, 6, 5]
+    ]
+  },
+  "reference_solution": {
+    "route": [0, 1, 2, 3, 4, 1, 4, 5, 6, 0],
+    "total_time": 58
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"route\", \"total_time\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        route = solution[\"route\"]\n        total_time = solution[\"total_time\"]\n        mandatory_routes = structured_data[\"mandatory_routes\"]\n        alternative_routes = structured_data[\"alternative_routes\"]\n        errors = []\n        \n        graph = {}\n        for u, v, time_wind, time_against in mandatory_routes + alternative_routes:\n            if u not in graph:\n                graph[u] = {}\n            if v not in graph:\n                graph[v] = {}\n            graph[u][v] = time_wind\n            graph[v][u] = time_against\n        \n        if len(route) < 2:\n            errors.append(\"Route must contain at least 2 points\")\n        \n        if route[0] != 0 or route[-1] != 0:\n            errors.append(\"Route must start and end at post office (point 0)\")\n        \n        for i in range(len(route)-1):\n            u, v = route[i], route[i+1]\n            if v not in graph.get(u, {}):\n                errors.append(f\"No road from point {u} to point {v}\")\n        \n        covered = set()\n        for i in range(len(route)-1):\n            u, v = route[i], route[i+1]\n            covered.add((u, v))\n            covered.add((v, u))\n        \n        for u, v, _, _ in mandatory_routes:\n            if (u, v) not in covered and (v, u) not in covered:\n                errors.append(f\"Mandatory route {u}<->{v} not covered\")\n        \n        actual_time = 0\n        for i in range(len(route)-1):\n            u, v = route[i], route[i+1]\n            actual_time += graph[u][v]\n        \n        if abs(actual_time - total_time) > 1e-6:\n            errors.append(f\"Time inconsistency: calculated {actual_time}, declared {total_time}\")\n        \n        if errors:\n            return {\n                \"is_valid\": False,\n                \"validation_errors\": errors,\n                \"optimality_score\": 0.0\n            }\n        \n        optimal_time = reference_solution[\"total_time\"]\n        if optimal_time == 0:\n            optimality_score = 1.0 if total_time == 0 else 0.0\n        else:\n            gap = abs(optimal_time - total_time) / abs(optimal_time)\n            optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": True,\n            \"validation_errors\": [],\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

@@ -1,0 +1,49 @@
+{
+  "problem_id": "mkp_002",
+  "metadata": {
+    "problem_type": "Multidimensional Knapsack Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "In a quantum logistics operation, a dimensional transport vessel must select from twenty-five quantum cargo modules for interstellar delivery. Each module has five measurable characteristics: economic value in quantum credit units (QCU), mass in metric tons, volume in cubic meters, structural integrity in fragility units (FU), and cooling energy consumption in cooling energy units (CEU). The vessel operates under strict constraints: maximum mass capacity of 50 tons, volume limit of 40 m³, integrity threshold of 20 FU, and cooling energy capacity of 25 CEU. The cargo modules have the following specifications: 1. Quantum Resonator: value 22 QCU, mass 3 tons, volume 2 m³, integrity 1 FU, energy 2 CEU. 2. Temporal Stabilizer: value 35 QCU, mass 5 tons, volume 3 m³, integrity 2 FU, energy 1 CEU. 3. Phase Shifter: value 18 QCU, mass 2 tons, volume 1 m³, integrity 0 FU, energy 1 CEU. 4. Dimensional Anchor: value 48 QCU, mass 7 tons, volume 4 m³, integrity 3 FU, energy 2 CEU. 5. Reality Bender: value 30 QCU, mass 4 tons, volume 3 m³, integrity 1 FU, energy 1 CEU. 6. Space Compressor: value 15 QCU, mass 1 ton, volume 1 m³, integrity 0 FU, energy 1 CEU. 7. Time Dilation Field: value 55 QCU, mass 8 tons, volume 5 m³, integrity 2 FU, energy 3 CEU. 8. Wormhole Generator: value 28 QCU, mass 3 tons, volume 2 m³, integrity 1 FU, energy 2 CEU. 9. Probability Manipulator: value 40 QCU, mass 6 tons, volume 4 m³, integrity 2 FU, energy 1 CEU. 10. Matter Transmuter: value 50 QCU, mass 7 tons, volume 5 m³, integrity 3 FU, energy 2 CEU. 11. Energy Converter: value 12 QCU, mass 1 ton, volume 1 m³, integrity 0 FU, energy 1 CEU. 12. Fusion Reactor Core: value 60 QCU, mass 9 tons, volume 6 m³, integrity 1 FU, energy 4 CEU. 13. Antimatter Container: value 25 QCU, mass 3 tons, volume 2 m³, integrity 1 FU, energy 1 CEU. 14. Plasma Conduit: value 45 QCU, mass 6 tons, volume 4 m³, integrity 2 FU, energy 2 CEU. 15. Dark Matter Harvester: value 32 QCU, mass 4 tons, volume 3 m³, integrity 1 FU, energy 1 CEU. 16. Neutronium Alloy: value 20 QCU, mass 2 tons, volume 2 m³, integrity 0 FU, energy 1 CEU. 17. Tachyon Emitter: value 38 QCU, mass 5 tons, volume 3 m³, integrity 2 FU, energy 2 CEU. 18. Quantum Computer: value 52 QCU, mass 7 tons, volume 5 m³, integrity 3 FU, energy 3 CEU. 19. Neural Interface: value 42 QCU, mass 6 tons, volume 4 m³, integrity 2 FU, energy 1 CEU. 20. Singularity Drive: value 58 QCU, mass 8 tons, volume 6 m³, integrity 1 FU, energy 4 CEU. 21. Photonic Crystal: value 16 QCU, mass 2 tons, volume 1 m³, integrity 0 FU, energy 1 CEU. 22. Graviton Projector: value 35 QCU, mass 4 tons, volume 3 m³, integrity 1 FU, energy 2 CEU. 23. Exotic Matter: value 48 QCU, mass 6 tons, volume 4 m³, integrity 2 FU, energy 2 CEU. 24. Zero-point Module: value 28 QCU, mass 3 tons, volume 2 m³, integrity 1 FU, energy 1 CEU. 25. Hyperdrive Core: value 40 QCU, mass 5 tons, volume 3 m³, integrity 1 FU, energy 2 CEU. Each module can either be selected (value 1) or excluded (value 0). Which combination of modules should be selected to maximize total quantum credit value while respecting all constraints?",
+  "solution_format_description": "Print the following fields: - selected: selection status for each module. - total_quantum_value: total quantum value. - total_mass: total mass. - total_volume: total volume. - total_integrity: total integrity. - total_cooling_energy: total cooling energy.",
+  "structured_data": {
+    "modules": [
+      [22, 3, 2, 1, 2], 
+      [35, 5, 3, 2, 1], 
+      [18, 2, 1, 0, 1], 
+      [48, 7, 4, 3, 2], 
+      [30, 4, 3, 1, 1], 
+      [15, 1, 1, 0, 1], 
+      [55, 8, 5, 2, 3], 
+      [28, 3, 2, 1, 2], 
+      [40, 6, 4, 2, 1], 
+      [50, 7, 5, 3, 2], 
+      [12, 1, 1, 0, 1], 
+      [60, 9, 6, 1, 4], 
+      [25, 3, 2, 1, 1], 
+      [45, 6, 4, 2, 2], 
+      [32, 4, 3, 1, 1], 
+      [20, 2, 2, 0, 1], 
+      [38, 5, 3, 2, 2], 
+      [52, 7, 5, 3, 3], 
+      [42, 6, 4, 2, 1], 
+      [58, 8, 6, 1, 4], 
+      [16, 2, 1, 0, 1], 
+      [35, 4, 3, 1, 2], 
+      [48, 6, 4, 2, 2], 
+      [28, 3, 2, 1, 1], 
+      [40, 5, 3, 1, 2]
+    ],
+    "constraints": [50, 40, 20, 25]
+  },
+  "reference_solution": {
+    "selected": [1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1],
+    "total_quantum_value": 422,
+    "total_mass": 50,
+    "total_volume": 34,
+    "total_integrity": 13,
+    "total_cooling_energy": 22
+  },
+  "solver_code": "from cpmpy import *\nimport json\n\nmodules = [\n    [22, 3, 2, 1, 2],\n    [35, 5, 3, 2, 1],\n    [18, 2, 1, 0, 1],\n    [48, 7, 4, 3, 2],\n    [30, 4, 3, 1, 1],\n    [15, 1, 1, 0, 1],\n    [55, 8, 5, 2, 3],\n    [28, 3, 2, 1, 2],\n    [40, 6, 4, 2, 1],\n    [50, 7, 5, 3, 2],\n    [12, 1, 1, 0, 1],\n    [60, 9, 6, 1, 4],\n    [25, 3, 2, 1, 1],\n    [45, 6, 4, 2, 2],\n    [32, 4, 3, 1, 1],\n    [20, 2, 2, 0, 1],\n    [38, 5, 3, 2, 2],\n    [52, 7, 5, 3, 3],\n    [42, 6, 4, 2, 1],\n    [58, 8, 6, 1, 4],\n    [16, 2, 1, 0, 1],\n    [35, 4, 3, 1, 2],\n    [48, 6, 4, 2, 2],\n    [28, 3, 2, 1, 1],\n    [40, 5, 3, 1, 2]\n]\n\nconstraints = [50, 40, 20, 25]\nmax_mass = constraints[0]\nmax_volume = constraints[1]\nmax_integrity = constraints[2]\nmax_cooling_energy = constraints[3]\n\nnum_modules = len(modules)\n\nx = boolvar(shape=num_modules)\n\nmodel = Model()\n\nmodel += sum(modules[i][1] * x[i] for i in range(num_modules)) <= max_mass\nmodel += sum(modules[i][2] * x[i] for i in range(num_modules)) <= max_volume\nmodel += sum(modules[i][3] * x[i] for i in range(num_modules)) <= max_integrity\nmodel += sum(modules[i][4] * x[i] for i in range(num_modules)) <= max_cooling_energy\n\nmodel.maximize(sum(modules[i][0] * x[i] for i in range(num_modules)))\n\nif model.solve():\n    selected = [int(x[i].value()) for i in range(num_modules)]\n    total_quantum_value = sum(modules[i][0] * selected[i] for i in range(num_modules))\n    total_mass = sum(modules[i][1] * selected[i] for i in range(num_modules))\n    total_volume = sum(modules[i][2] * selected[i] for i in range(num_modules))\n    total_integrity = sum(modules[i][3] * selected[i] for i in range(num_modules))\n    total_cooling_energy = sum(modules[i][4] * selected[i] for i in range(num_modules))\n    \n    result = {\n        \"selected\": selected,\n        \"total_quantum_value\": total_quantum_value,\n        \"total_mass\": total_mass,\n        \"total_volume\": total_volume,\n        \"total_integrity\": total_integrity,\n        \"total_cooling_energy\": total_cooling_energy\n    }\n    print(json.dumps(result))",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected\", \"total_quantum_value\", \"total_mass\", \"total_volume\", \"total_integrity\", \"total_cooling_energy\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected = solution[\"selected\"]\n        total_mass = solution[\"total_mass\"]\n        total_volume = solution[\"total_volume\"]\n        total_integrity = solution[\"total_integrity\"]\n        total_cooling_energy = solution[\"total_cooling_energy\"]\n        \n        modules = structured_data[\"modules\"]\n        constraints = structured_data[\"constraints\"]\n        num_modules = len(modules)\n        errors = []\n        \n        if len(selected) != num_modules:\n            errors.append(f\"Selection array length mismatch: expected {num_modules}, got {len(selected)}\")\n            return {\"is_valid\": False, \"validation_errors\": errors, \"optimality_score\": 0.0}\n        \n        for i in range(num_modules):\n            if selected[i] not in [0, 1]:\n                errors.append(f\"Invalid selection value at index {i}: {selected[i]} (must be 0 or 1)\")\n        \n        if total_mass > constraints[0]:\n            errors.append(f\"Mass constraint violated: {total_mass} > {constraints[0]}\")\n        \n        if total_volume > constraints[1]:\n            errors.append(f\"Volume constraint violated: {total_volume} > {constraints[1]}\")\n        \n        if total_integrity > constraints[2]:\n            errors.append(f\"Integrity constraint violated: {total_integrity} > {constraints[2]}\")\n        \n        if total_cooling_energy > constraints[3]:\n            errors.append(f\"Cooling energy constraint violated: {total_cooling_energy} > {constraints[3]}\")\n        \n        if len(errors) == 0:\n            optimal_value = reference_solution[\"total_quantum_value\"]\n            if optimal_value == 0:\n                optimality_score = 1.0 if solution[\"total_quantum_value\"] == 0 else 0.0\n            else:\n                gap = abs(optimal_value - solution[\"total_quantum_value\"]) / abs(optimal_value)\n                optimality_score = max(0, 1 - gap)\n        else:\n            optimality_score = 0.0\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

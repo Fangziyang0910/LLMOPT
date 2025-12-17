@@ -1,0 +1,47 @@
+{
+  "problem_id": "orienteering_problem_002",
+  "metadata": {
+    "problem_type": "Orienteering Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "Alex is organizing a treasure hunt across a large university campus and wants to collect as many valuable clues as possible, but due to limited time and energy, this hunt can only cover a distance of 5.0 kilometers. He must start at the campus entrance located at (0, 0) and finish at the main building located at (2.5, 2.5), with all coordinates measured in kilometers. While any two locations can be reached by walking directly in a straight line, each clue location can be visited at most once, and Alex needs to determine which locations to include in his route to maximize the total value of clues collected. The campus entrance and main building have no value, while the following clue locations have their coordinates and values: 1. Library at (0.3, 0.4) worth 12 value; 2. Science Lab at (0.7, 0.2) worth 18 value; 3. Art Gallery at (1.0, 0.8) worth 25 value; 4. Cafeteria at (0.5, 1.2) worth 15 value; 5. Sports Center at (1.5, 0.6) worth 30 value; 6. Dormitory A at (1.2, 1.5) worth 22 value; 7. Botanical Garden at (0.8, 1.8) worth 20 value; 8. Engineering Building at (1.8, 1.2) worth 28 value; 9. Business School at (2.0, 0.5) worth 35 value; 10. Student Center at (0.2, 0.8) worth 14 value; 11. Computer Lab at (0.6, 1.0) worth 16 value; 12. Music Hall at (1.4, 0.3) worth 24 value; 13. Theater at (1.6, 1.8) worth 32 value; 14. Gymnasium at (0.4, 1.5) worth 19 value; 15. Medical Center at (1.1, 0.7) worth 26 value; 16. Bookstore at (0.9, 1.3) worth 21 value; 17. Research Institute at (1.7, 0.9) worth 29 value; 18. Observatory at (1.3, 2.0) worth 33 value; 19. Chapel at (0.1, 0.5) worth 13 value; 20. Conference Center at (1.9, 1.5) worth 31 value; 21. Parking Garage at (0.3, 1.7) worth 17 value; 22. Innovation Hub at (2.2, 0.8) worth 36 value; 23. Recreation Area at (0.7, 2.2) worth 27 value.",
+  "solution_format_description": "Print the following fields: - path: sequence of locations visited from start to end. - visited_locations: visitation status for each location. - total_value: total clue value. - total_distance: total walking distance.",
+  "structured_data": {
+    "locations": [
+      [0.0, 0.0, 0],
+      [0.3, 0.4, 12],
+      [0.7, 0.2, 18],
+      [1.0, 0.8, 25],
+      [0.5, 1.2, 15],
+      [1.5, 0.6, 30],
+      [1.2, 1.5, 22],
+      [0.8, 1.8, 20],
+      [1.8, 1.2, 28],
+      [2.0, 0.5, 35],
+      [0.2, 0.8, 14],
+      [0.6, 1.0, 16],
+      [1.4, 0.3, 24],
+      [1.6, 1.8, 32],
+      [0.4, 1.5, 19],
+      [1.1, 0.7, 26],
+      [0.9, 1.3, 21],
+      [1.7, 0.9, 29],
+      [1.3, 2.0, 33],
+      [0.1, 0.5, 13],
+      [1.9, 1.5, 31],
+      [0.3, 1.7, 17],
+      [2.2, 0.8, 36],
+      [0.7, 2.2, 27],
+      [2.5, 2.5, 0]
+    ],
+    "distance_budget": 5.0
+  },
+  "reference_solution": {
+    "path": [0, 1, 3, 15, 5, 17, 8, 20, 13, 18, 24],
+    "visited_locations": [1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1],
+    "total_value": 246,
+    "total_distance": 4.9378
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    import math\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"path\", \"visited_locations\", \"total_value\", \"total_distance\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        path = solution[\"path\"]\n        visited_locations = solution[\"visited_locations\"]\n        total_value = solution[\"total_value\"]\n        total_distance = solution[\"total_distance\"]\n        locations = structured_data[\"locations\"]\n        distance_budget = structured_data[\"distance_budget\"]\n        n = len(locations)\n        \n        errors = []\n        \n        if len(visited_locations) != n:\n            errors.append(f\"Array length mismatch: expected {n}, got {len(visited_locations)}\")\n        \n        if total_distance > distance_budget + 0.01:\n            errors.append(f\"Distance constraint violated: {total_distance} > {distance_budget}\")\n        \n        if not path:\n            errors.append(\"Path cannot be empty\")\n        elif path[0] != 0:\n            errors.append(f\"Path must start at entrance (0), got {path[0]}\")\n        elif path[-1] != n - 1:\n            errors.append(f\"Path must end at main building ({n-1}), got {path[-1]}\")\n        \n        if len(path) != len(set(path)):\n            errors.append(\"Path contains duplicate nodes\")\n        \n        path_visited = [0] * n\n        for node in path:\n            if 0 <= node < n:\n                path_visited[node] = 1\n        \n        for i in range(n):\n            if visited_locations[i] != path_visited[i]:\n                errors.append(f\"visited_locations mismatch at index {i}: array={visited_locations[i]}, path={path_visited[i]}\")\n        \n        actual_distance = 0\n        actual_value = 0\n        \n        for i in range(len(path) - 1):\n            curr, next_node = path[i], path[i + 1]\n            if curr < 0 or curr >= n or next_node < 0 or next_node >= n:\n                errors.append(f\"Invalid node in path: {curr} -> {next_node}\")\n                continue\n            dx = locations[curr][0] - locations[next_node][0]\n            dy = locations[curr][1] - locations[next_node][1]\n            actual_distance += math.sqrt(dx*dx + dy*dy)\n        \n        for node in path:\n            if 0 <= node < n:\n                actual_value += locations[node][2]\n        \n        if abs(actual_distance - total_distance) > 0.01:\n            errors.append(f\"Distance inconsistency: calculated {actual_distance:.6f}, declared {total_distance:.6f}\")\n        \n        if actual_value != total_value:\n            errors.append(f\"Value inconsistency: calculated {actual_value}, declared {total_value}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_value = reference_solution[\"total_value\"]\n            if optimal_value == 0:\n                optimality_score = 1.0 if total_value == 0 else 0.0\n            else:\n                gap = abs(optimal_value - total_value) / abs(optimal_value)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

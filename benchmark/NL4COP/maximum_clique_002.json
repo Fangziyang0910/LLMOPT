@@ -1,0 +1,44 @@
+{
+  "problem_id": "maximum_clique_002",
+  "metadata": {
+    "problem_type": "Maximum Clique Problem",
+    "difficulty": "medium"
+  },
+  "problem_description": "In a multinational technology corporation spanning multiple continents, an organizational development specialist is analyzing the intricate web of professional synergies among 25 key personnel across various departments and geographical locations. The complex collaborative ecosystem reveals that staff member 0 has established productive working relationships with staff members 2, 5, 8, 11, 14, 7, 13, and 19 through cross-functional projects and strategic initiatives. Staff member 1's professional network encompasses staff members 3, 6, 9, 12, and 15, characterized by frequent knowledge exchange and mutual support. Staff member 2's interdisciplinary collaborations extend to staff members 0, 5, 8, 11, 14, 17, 7, 13, and 19, fostering innovation through diverse expertise. Staff member 3's synergistic partnerships involve staff members 1, 6, 9, 12, 15, and 18, creating a cohesive unit for complex problem-solving. Staff member 4's collaborative endeavors connect with staff members 7, 10, 13, 16, and 19, bridging different organizational silos. Staff member 5's dynamic teamwork involves staff members 0, 2, 8, 11, 14, 17, 20, 7, 13, and 19, leveraging complementary skill sets. Staff member 6's cooperative alliances include staff members 1, 3, 9, 12, 15, 18, and 21, enhancing organizational resilience. Staff member 7's multifaceted collaborations span staff members 4, 10, 13, 16, 19, 22, 0, 2, 5, 11, and 17, integrating diverse perspectives. Staff member 8's innovative partnerships engage staff members 0, 2, 5, 11, 14, 17, 20, and 23, driving breakthrough solutions. Staff member 9's strategic interactions involve staff members 1, 3, 6, 12, 15, 18, 21, and 24, creating a robust knowledge-sharing network. Staff member 10's cross-departmental work connects with staff members 4, 7, 13, 16, and 19, facilitating organizational learning. Staff member 11's collaborative ventures include staff members 0, 2, 5, 8, 14, 17, 20, 23, 7, 13, and 19, promoting best practice dissemination. Staff member 12's professional relationships extend to staff members 1, 3, 6, 9, 15, 18, 21, and 24, strengthening inter-team coordination. Staff member 13's diverse collaborations involve staff members 4, 10, 16, 19, 22, 0, 2, 5, 7, 11, 17, and 23, creating a rich tapestry of expertise. Staff member 14's synergistic work encompasses staff members 0, 2, 5, 8, 11, 17, 20, and 23, fostering organizational agility. Staff member 15's cooperative engagements involve staff members 1, 3, 6, 9, 12, 18, 21, and 24, enhancing collective intelligence. Staff member 16's collaborative efforts connect with staff members 4, 10, 13, 19, and 22, driving strategic alignment. Staff member 17's integrated partnerships span staff members 2, 5, 8, 11, 14, 20, 23, 7, 13, and 19, maximizing organizational capability. Staff member 18's coordinated work involves staff members 3, 6, 9, 12, 15, 21, and 24, optimizing resource utilization. Staff member 19's extensive collaborations include staff members 4, 10, 13, 16, 22, 0, 2, 5, 7, 11, 13, 17, and 23, creating a hub of innovation. Staff member 20's synergistic interactions engage staff members 5, 8, 11, 14, 17, and 23, fostering continuous improvement. Staff member 21's collaborative network connects to staff members 6, 9, 12, 15, 18, and 24, enhancing organizational effectiveness. Staff member 22's interdisciplinary work involves staff members 7, 10, 13, 16, 23, and 24, promoting knowledge integration. Staff member 23's diverse partnerships span staff members 8, 11, 14, 17, 19, 20, 22, and 24, creating a nexus of expertise. Staff member 24's collaborative endeavors connect with staff members 9, 12, 15, 18, 21, 22, and 23, strengthening organizational cohesion. The specialist seeks to identify the optimal configuration of personnel where complete mutual professional compatibility exists among all members, determining precisely which staff members constitute this most harmonious operational unit and quantifying its collaborative potential.",
+  "solution_format_description": "Print the following fields: - selected_employees: employees in the maximum clique. - team_size: size of the maximum clique.",
+  "structured_data": {
+    "collaborations": [
+      [0, 2], [0, 5], [0, 8], [0, 11], [0, 14], [0, 7], [0, 13], [0, 19],
+      [1, 3], [1, 6], [1, 9], [1, 12], [1, 15],
+      [2, 5], [2, 8], [2, 11], [2, 14], [2, 17], [2, 7], [2, 13], [2, 19],
+      [3, 6], [3, 9], [3, 12], [3, 15], [3, 18],
+      [4, 7], [4, 10], [4, 13], [4, 16], [4, 19],
+      [5, 8], [5, 11], [5, 14], [5, 17], [5, 20], [5, 7], [5, 13], [5, 19],
+      [6, 9], [6, 12], [6, 15], [6, 18], [6, 21],
+      [7, 10], [7, 13], [7, 16], [7, 19], [7, 22], [7, 11], [7, 17],
+      [8, 11], [8, 14], [8, 17], [8, 20], [8, 23],
+      [9, 12], [9, 15], [9, 18], [9, 21], [9, 24],
+      [10, 13], [10, 16], [10, 19],
+      [11, 14], [11, 17], [11, 20], [11, 23], [11, 13], [11, 19],
+      [12, 15], [12, 18], [12, 21], [12, 24],
+      [13, 16], [13, 19], [13, 22], [13, 17], [13, 23],
+      [14, 17], [14, 20], [14, 23],
+      [15, 18], [15, 21], [15, 24],
+      [16, 19], [16, 22],
+      [17, 20], [17, 23], [17, 19],
+      [18, 21], [18, 24],
+      [19, 22], [19, 23],
+      [20, 23],
+      [21, 24],
+      [22, 23], [22, 24],
+      [23, 24]
+    ],
+    "num_employees": 25
+  },
+  "reference_solution": {
+    "selected_employees": [0, 2, 5, 7, 11, 13, 19],
+    "team_size": 7
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    required_fields = [\"selected_employees\", \"team_size\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    try:\n        selected_employees = solution[\"selected_employees\"]\n        team_size = solution[\"team_size\"]\n        collaborations = structured_data[\"collaborations\"]\n        num_employees = structured_data[\"num_employees\"]\n        errors = []\n        if len(selected_employees) != team_size:\n            errors.append(f\"Team size mismatch: declared {team_size}, actual {len(selected_employees)}\")\n        for employee in selected_employees:\n            if employee < 0 or employee >= num_employees:\n                errors.append(f\"Invalid employee ID: {employee}\")\n        if len(selected_employees) != len(set(selected_employees)):\n            errors.append(\"Duplicate employees in selection\")\n        adj = set()\n        for u, v in collaborations:\n            adj.add((u, v))\n            adj.add((v, u))\n        for i in range(len(selected_employees)):\n            for j in range(i + 1, len(selected_employees)):\n                u, v = selected_employees[i], selected_employees[j]\n                if (u, v) not in adj:\n                    errors.append(f\"Not a clique: {u} and {v} have not worked together\")\n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_size = reference_solution[\"team_size\"]\n            if optimal_size == 0:\n                optimality_score = 1.0 if team_size == 0 else 0.0\n            else:\n                gap = abs(optimal_size - team_size) / abs(optimal_size)\n                optimality_score = max(0, 1 - gap)\n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

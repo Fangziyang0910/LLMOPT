@@ -1,0 +1,55 @@
+{
+  "problem_id": "vehicle_routing_problem_with_time_window_002",
+  "metadata": {
+    "problem_type": "Vehicle Routing Problem with Time Window",
+    "difficulty": "medium"
+  },
+  "problem_description": "A food supply company needs to coordinate meal deliveries to 25 different customers across the city using 4 delivery vans. All vans must start their routes from the company's distribution center located in the city center and must return to the distribution center after completing their deliveries. Each van can carry up to 70 meal packages. All deliveries must be completed within 680 minutes to ensure food freshness and quality, and each customer has specific time windows when they can receive deliveries to match their preparation schedules. Vehicles travel at an average speed of 40 km/h within the city, and any two locations can be reached directly by traveling in a straight line. The distribution center serves as the coordinate origin (0, 0), with all coordinates measured in kilometers. Customer details: 1. Customer 1 at coordinates (10, 10): needs 8 packages, available between 10-120 minutes, requires 15 minutes for service time; 2. Customer 2 at coordinates (15, 15): needs 10 packages, available between 75-135 minutes, requires 20 minutes for service time; 3. Customer 3 at coordinates (20, 10): needs 6 packages, available between 90-150 minutes, requires 15 minutes for service time; 4. Customer 4 at coordinates (15, 20): needs 12 packages, available between 105-165 minutes, requires 25 minutes for service time; 5. Customer 5 at coordinates (10, 25): needs 8 packages, available between 120-180 minutes, requires 20 minutes for service time; 6. Customer 6 at coordinates (25, 15): needs 10 packages, available between 180-240 minutes, requires 20 minutes for service time; 7. Customer 7 at coordinates (35, 15): needs 8 packages, available between 195-275 minutes, requires 15 minutes for service time; 8. Customer 8 at coordinates (40, 10): needs 12 packages, available between 210-270 minutes, requires 25 minutes for service time; 9. Customer 9 at coordinates (35, 20): needs 6 packages, available between 225-285 minutes, requires 15 minutes for service time; 10. Customer 10 at coordinates (30, 25): needs 10 packages, available between 240-400 minutes, requires 20 minutes for service time; 11. Customer 11 at coordinates (25, 35): needs 8 packages, available between 300-360 minutes, requires 15 minutes for service time; 12. Customer 12 at coordinates (30, 40): needs 12 packages, available between 315-375 minutes, requires 25 minutes for service time; 13. Customer 13 at coordinates (35, 35): needs 6 packages, available between 300-390 minutes, requires 15 minutes for service time; 14. Customer 14 at coordinates (40, 40): needs 10 packages, available between 345-405 minutes, requires 20 minutes for service time; 15. Customer 15 at coordinates (25, 45): needs 8 packages, available between 360-420 minutes, requires 15 minutes for service time; 16. Customer 16 at coordinates (40, 35): needs 10 packages, available between 420-580 minutes, requires 20 minutes for service time; 17. Customer 17 at coordinates (55, 25): needs 8 packages, available between 435-495 minutes, requires 15 minutes for service time; 18. Customer 18 at coordinates (60, 20): needs 12 packages, available between 450-510 minutes, requires 25 minutes for service time; 19. Customer 19 at coordinates (55, 30): needs 6 packages, available between 465-525 minutes, requires 15 minutes for service time; 20. Customer 20 at coordinates (50, 35): needs 10 packages, available between 420-540 minutes, requires 20 minutes for service time; 21. Customer 21 at coordinates (45, 45): needs 8 packages, available between 510-600 minutes, requires 15 minutes for service time; 22. Customer 22 at coordinates (40, 50): needs 12 packages, available between 555-600 minutes, requires 25 minutes for service time; 23. Customer 23 at coordinates (35, 45): needs 6 packages, available between 530-680 minutes, requires 15 minutes for service time; 24. Customer 24 at coordinates (30, 50): needs 10 packages, available between 275-600 minutes, requires 20 minutes for service time; 25. Customer 25 at coordinates (25, 55): needs 8 packages, available between 340-680 minutes, requires 15 minutes for service time. Each customer must be visited exactly once, and the company wants to find the optimal delivery routes that minimize total distance while respecting all time windows and capacity constraints.",
+  "solution_format_description": "Print the following fields: - routes: for each van, list the complete route sequence. - total_time: maximum completion time among all vans. - total_distance: sum of all travel distances. - van_loads: total packages carried by each van.",
+  "structured_data": {
+    "van_count": 4,
+    "van_capacity": 70,
+    "van_speed": 40.0,
+    "distribution_center": [0, 0, 680],
+    "customers": [
+      [10, 10, 8, 10, 120, 15],
+      [15, 15, 10, 75, 135, 20],
+      [20, 10, 6, 90, 150, 15],
+      [15, 20, 12, 105, 165, 25],
+      [10, 25, 8, 120, 180, 20],
+      [25, 15, 10, 180, 240, 20],
+      [35, 15, 8, 195, 275, 15],
+      [40, 10, 12, 210, 270, 25],
+      [35, 20, 6, 225, 285, 15],
+      [30, 25, 10, 240, 400, 20],
+      [25, 35, 8, 300, 360, 15],
+      [30, 40, 12, 315, 375, 25],
+      [35, 35, 6, 300, 390, 15],
+      [40, 40, 10, 345, 405, 20],
+      [25, 45, 8, 360, 420, 15],
+      [40, 35, 10, 420, 580, 20],
+      [55, 25, 8, 435, 495, 15],
+      [60, 20, 12, 450, 510, 25],
+      [55, 30, 6, 465, 525, 15],
+      [50, 35, 10, 420, 540, 20],
+      [45, 45, 8, 510, 600, 15],
+      [40, 50, 12, 555, 600, 25],
+      [35, 45, 6, 530, 680, 15],
+      [30, 50, 10, 275, 600, 20],
+      [25, 55, 8, 340, 680, 15]
+    ]   
+  },
+  "reference_solution": {
+    "routes": [
+      [0, 5, 11, 12, 15, 25, 24, 23, 0],
+      [0, 7, 8, 18, 17, 19, 20, 16, 0],
+      [0, 3, 6, 9, 10, 13, 14, 21, 22, 0],
+      [0, 1, 2, 4, 0]
+    ],
+    "total_time": 676,
+    "total_distance": 485.371,
+    "van_loads": [60, 66, 68, 30]
+   },
+   "solver_code": "",
+   "evaluation_function": "import json\nimport numpy as np\n\ndef evaluate(candidate_solution, structured_data, reference_solution):\n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"routes\", \"total_distance\", \"total_time\"]\n    missing = [f for f in required_fields if f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    routes = solution[\"routes\"]\n    total_distance = solution[\"total_distance\"]\n    total_time = solution[\"total_time\"]\n    \n    van_count = structured_data[\"van_count\"]\n    van_capacity = structured_data[\"van_capacity\"]\n    van_speed = structured_data[\"van_speed\"]\n    dist_center = structured_data[\"distribution_center\"]\n    customers = structured_data[\"customers\"]\n    \n    all_visited = set()\n    for route in routes:\n        if not isinstance(route, list):\n            return {\"is_valid\": False, \"validation_errors\": [\"Each route must be a list\"], \"optimality_score\": 0.0}\n        \n        for customer_id in route:\n            if customer_id == 0:\n                continue\n            if not isinstance(customer_id, int) or customer_id < 1 or customer_id > len(customers):\n                return {\"is_valid\": False, \"validation_errors\": [\"Invalid customer ID\"], \"optimality_score\": 0.0}\n            all_visited.add(customer_id)\n    \n    expected_customers = set(range(1, len(customers) + 1))\n    if all_visited != expected_customers:\n        return {\"is_valid\": False, \"validation_errors\": [\"Not all customers visited\"], \"optimality_score\": 0.0}\n    \n    for k, route in enumerate(routes):\n        total_load = sum(customers[c-1][2] for c in route if c > 0)\n        if total_load > van_capacity:\n            return {\"is_valid\": False, \"validation_errors\": [f\"Van {k} capacity exceeded\"], \"optimality_score\": 0.0}\n    \n    all_points = [[dist_center[0], dist_center[1]]] + [[c[0], c[1]] for c in customers]\n    distance_matrix = np.zeros((len(all_points), len(all_points)))\n    for i in range(len(all_points)):\n        for j in range(len(all_points)):\n            if i != j:\n                dx = all_points[i][0] - all_points[j][0]\n                dy = all_points[i][1] - all_points[j][1]\n                distance_matrix[i][j] = np.sqrt(dx*dx + dy*dy)\n    \n    time_matrix = distance_matrix * 60 / van_speed\n    \n    for k, route in enumerate(routes):\n        if not route:\n            continue\n            \n        current_time = 0\n        current_loc = 0\n        \n        for location_id in route:\n            travel_time = time_matrix[current_loc][location_id]\n            current_time += travel_time\n            \n            if location_id > 0:\n                earliest = customers[location_id-1][3]\n                latest = customers[location_id-1][4]\n                service_time = customers[location_id-1][5]\n                \n                adjusted_arrival = max(current_time, earliest)\n                \n                if adjusted_arrival > latest:\n                    return {\"is_valid\": False, \"validation_errors\": [f\"Time window violation at customer {location_id}\"], \"optimality_score\": 0.0}\n                \n                current_time = adjusted_arrival + service_time\n            current_loc = location_id\n        \n        if current_loc != 0:\n            travel_time = time_matrix[current_loc][0]\n            current_time += travel_time\n        \n        if current_time > dist_center[2]:\n            return {\"is_valid\": False, \"validation_errors\": [f\"Total time constraint violated for van {k}\"], \"optimality_score\": 0.0}\n    \n    optimal_distance = reference_solution[\"total_distance\"]\n    \n    if optimal_distance > 0:\n        optimality_score = max(0, 1 - abs(total_distance - optimal_distance) / optimal_distance)\n    else:\n        optimality_score = 1.0 if total_distance == 0 else 0.0\n    \n    return {\n        \"is_valid\": True,\n        \"validation_errors\": [],\n        \"optimality_score\": optimality_score\n    }"
+  }

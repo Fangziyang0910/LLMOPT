@@ -1,0 +1,37 @@
+{
+  "problem_id": "location_routing_problem_001",
+  "metadata": {
+    "problem_type": "Location-Routing Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A grocery delivery service needs to establish distribution warehouses and delivery routes for serving 5 residential communities in a city. All locations are measured in kilometers from the city center. All locations are directly accessible from each other. The company has identified 3 potential locations for distribution warehouses: Warehouse 1 at (25, 35) with setup cost $2500 and capacity 100 orders daily, Warehouse 2 at (65, 55) with setup cost $2800 and capacity 120 orders daily, and Warehouse 3 at (45, 75) with setup cost $3000 and capacity 110 orders daily. Each warehouse's daily processing capacity cannot be exceeded. The 5 communities are located at different coordinates across the city with specific daily order volumes that must be exactly met: Community 1 at (10, 20) needs 15 orders daily, Community 2 at (30, 40) needs 25 orders daily, Community 3 at (50, 10) needs 20 orders daily, Community 4 at (70, 30) needs 18 orders daily, and Community 5 at (20, 50) needs 22 orders daily. The company operates delivery trucks that can transport up to 50 orders per trip, with each truck costing $300 to operate per day plus $12 per kilometer of travel distance. Each delivery truck must start from its assigned warehouse, serve its designated communities, and return to the same warehouse, ensuring every community is served exactly once. The total cost includes warehouse setup costs, truck operating costs, and transportation costs. The company needs to decide which warehouses to open and how to organize delivery routes to serve all communities with minimal total cost.",
+  "solution_format_description": "Print the following fields: - opened_warehouses: which distribution warehouses are open. - delivery_routes: delivery routes for each truck with warehouse, communities, and orders. - total_cost: total cost including setup and transportation.",
+  "structured_data": {
+    "residential_communities": [
+      [10, 20, 15],
+      [30, 40, 25],
+      [50, 10, 20],
+      [70, 30, 18],
+      [20, 50, 22]
+    ],
+    "distribution_warehouses": [
+      [25, 35, 2500, 100],
+      [65, 55, 2800, 120],
+      [45, 75, 3000, 110]
+    ],
+    "truck_order_capacity": 50,
+    "daily_truck_cost": 300,
+    "transport_cost_per_km": 12
+  },
+  "reference_solution": {
+    "opened_warehouses": [0],
+    "delivery_routes": [
+      [0, [0], 15],
+      [0, [1, 4], 47],
+      [0, [2, 3], 38]
+    ],
+    "total_cost": 5660.41
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"opened_warehouses\", \"delivery_routes\", \"total_cost\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        opened_warehouses = solution[\"opened_warehouses\"]\n        delivery_routes = solution[\"delivery_routes\"]\n        total_cost = solution[\"total_cost\"]\n        \n        residential_communities = structured_data[\"residential_communities\"]\n        distribution_warehouses = structured_data[\"distribution_warehouses\"]\n        truck_capacity = structured_data[\"truck_order_capacity\"]\n        \n        errors = []\n        \n        served_communities = set()\n        for route in delivery_routes:\n            route_communities = route[1]\n            for c in route_communities:\n                if c in served_communities:\n                    errors.append(f\"Community {c} served multiple times\")\n                served_communities.add(c)\n        \n        all_communities = set(range(len(residential_communities)))\n        unserved_communities = all_communities - served_communities\n        if unserved_communities:\n            errors.append(f\"Communities not served: {unserved_communities}\")\n        \n        for i, route in enumerate(delivery_routes):\n            order_load = route[2]\n            if order_load > truck_capacity:\n                errors.append(f\"Route {i} exceeds truck capacity: {order_load} > {truck_capacity}\")\n        \n        warehouse_loads = {w: 0 for w in opened_warehouses}\n        for route in delivery_routes:\n            warehouse_id = route[0]\n            order_load = route[2]\n            if warehouse_id not in opened_warehouses:\n                errors.append(f\"Route uses closed warehouse {warehouse_id}\")\n            else:\n                warehouse_loads[warehouse_id] += order_load\n        \n        for w in opened_warehouses:\n            capacity = distribution_warehouses[w][3]\n            load = warehouse_loads[w]\n            if load > capacity:\n                errors.append(f\"Warehouse {w} exceeds capacity: {load} > {capacity}\")\n        \n        if errors:\n            return {\n                \"is_valid\": False,\n                \"validation_errors\": errors,\n                \"optimality_score\": 0.0\n            }\n        \n        optimal_cost = reference_solution[\"total_cost\"]\n        if optimal_cost == 0:\n            optimality_score = 1.0 if total_cost == 0 else 0.0\n        else:\n            gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n            optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": True,\n            \"validation_errors\": [],\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

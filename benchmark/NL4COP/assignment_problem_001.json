@@ -1,0 +1,151 @@
+{
+  "problem_id": "assignment_problem_001",
+  "metadata": {
+    "problem_type": "Assignment Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A project manager at a tech consulting firm is planning a new software development project. The project is broken down into 10 distinct tasks, and the manager has 10 specialized employees available for assignment. Each employee has a different level of efficiency for each task, which translates to a specific cost (in hours) to complete it. The manager's goal is to assign each employee to exactly one task, ensuring that every task is covered, in a way that minimizes the total cost for the project.\n\nThe table below shows the cost (in hours) for assigning each employee (E1 to E10) to each task (T1 to T10).\n\n| | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 | T9 | T10 |\n| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n| **E1** | 52 | 89 | 40 | 77 | 89 | 14 | 9 | 77 | 92 | 77 |\n| **E2** | 20 | 17 | 80 | 96 | 14 | 43 | 4 | 69 | 5 | 29 |\n| **E3** | 17 | 34 | 50 | 77 | 71 | 31 | 74 | 26 | 100 | 20 |\n| **E4** | 55 | 63 | 85 | 35 | 31 | 46 | 51 | 70 | 21 | 24 |\n| **E5** | 70 | 13 | 14 | 26 | 49 | 80 | 24 | 48 | 31 | 42 |\n| **E6** | 99 | 72 | 15 | 91 | 70 | 94 | 95 | 50 | 35 | 30 |\n| **E7** | 77 | 83 | 59 | 20 | 49 | 97 | 66 | 21 | 82 | 42 |\n| **E8** | 37 | 78 | 99 | 75 | 77 | 2 | 39 | 53 | 54 | 90 |\n| **E9** | 79 | 6 | 19 | 90 | 57 | 16 | 64 | 15 | 50 | 2 |\n| **E10** | 23 | 75 | 22 | 81 | 44 | 22 | 28 | 67 | 75 | 81 |\n\nHow should the manager assign the employees to the tasks to achieve the minimum possible total cost?",
+  "solution_format_description": "Print the following fields: - total_cost: total assignment cost. - employee_task_assignment: task assignment for each employee.",
+  "structured_data": {
+    "num_employees": 10,
+    "cost_matrix": [
+      [
+        52,
+        89,
+        40,
+        77,
+        89,
+        14,
+        9,
+        77,
+        92,
+        77
+      ],
+      [
+        20,
+        17,
+        80,
+        96,
+        14,
+        43,
+        4,
+        69,
+        5,
+        29
+      ],
+      [
+        17,
+        34,
+        50,
+        77,
+        71,
+        31,
+        74,
+        26,
+        100,
+        20
+      ],
+      [
+        55,
+        63,
+        85,
+        35,
+        31,
+        46,
+        51,
+        70,
+        21,
+        24
+      ],
+      [
+        70,
+        13,
+        14,
+        26,
+        49,
+        80,
+        24,
+        48,
+        31,
+        42
+      ],
+      [
+        99,
+        72,
+        15,
+        91,
+        70,
+        94,
+        95,
+        50,
+        35,
+        30
+      ],
+      [
+        77,
+        83,
+        59,
+        20,
+        49,
+        97,
+        66,
+        21,
+        82,
+        42
+      ],
+      [
+        37,
+        78,
+        99,
+        75,
+        77,
+        2,
+        39,
+        53,
+        54,
+        90
+      ],
+      [
+        79,
+        6,
+        19,
+        90,
+        57,
+        16,
+        64,
+        15,
+        50,
+        2
+      ],
+      [
+        23,
+        75,
+        22,
+        81,
+        44,
+        22,
+        28,
+        67,
+        75,
+        81
+      ]
+    ]
+  },
+  "reference_solution": {
+    "total_cost": 145,
+    "employee_task_assignment": [
+      6,
+      4,
+      7,
+      8,
+      1,
+      2,
+      3,
+      5,
+      9,
+      0
+    ]
+  },
+  "solver_code": "\nimport json\nimport numpy as np\nfrom cpmpy import Model, boolvar, sum\n\n\nnum_employees = 10\ncost_matrix = np.array([\n    [52, 89, 40, 77, 89, 14, 9, 77, 92, 77],\n    [20, 17, 80, 96, 14, 43, 4, 69, 5, 29],\n    [17, 34, 50, 77, 71, 31, 74, 26, 100, 20],\n    [55, 63, 85, 35, 31, 46, 51, 70, 21, 24],\n    [70, 13, 14, 26, 49, 80, 24, 48, 31, 42],\n    [99, 72, 15, 91, 70, 94, 95, 50, 35, 30],\n    [77, 83, 59, 20, 49, 97, 66, 21, 82, 42],\n    [37, 78, 99, 75, 77, 2, 39, 53, 54, 90],\n    [79, 6, 19, 90, 57, 16, 64, 15, 50, 2],\n    [23, 75, 22, 81, 44, 22, 28, 67, 75, 81]\n])\n\n\n\nx = boolvar(shape=(num_employees, num_employees))\n\n\nmodel = Model()\n\nmodel += [sum(x[i, :]) == 1 for i in range(num_employees)]\n\nmodel += [sum(x[:, j]) == 1 for j in range(num_employees)]\n\n\nmodel.minimize(sum(cost_matrix * x))\n\n\nif model.solve():\n\n    total_cost = int(model.objective_value())\n    assignment_matrix = x.value()\n    \n\n\n    employee_task_assignment = np.where(assignment_matrix == 1)[1].tolist()\n    \n\n    result = {\n        \"total_cost\": total_cost,\n        \"employee_task_assignment\": employee_task_assignment\n    }\n    print(json.dumps(result, indent=2))\nelse:\n    print(\"No solution found.\")\n",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n\n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n\n    required_fields = [\"total_cost\", \"employee_task_assignment\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n\n    try:\n        assignment = solution[\"employee_task_assignment\"]\n        total_cost = solution[\"total_cost\"]\n        \n        num_employees = structured_data[\"num_employees\"]\n        cost_matrix = structured_data[\"cost_matrix\"]\n        errors = []\n        \n\n        if not isinstance(assignment, list) or len(assignment) != num_employees:\n            errors.append(\"Invalid assignment structure\")\n        elif sorted(assignment) != list(range(num_employees)):\n            errors.append(\"Assignment is not a valid permutation\")\n        \n\n        if len(errors) > 0:\n            return {\"is_valid\": False, \"validation_errors\": errors, \"optimality_score\": 0.0}\n        \n\n        calculated_cost = 0\n        for employee, task in enumerate(assignment):\n            calculated_cost += cost_matrix[employee][task]\n        \n\n        if abs(total_cost - calculated_cost) > 1e-6:\n            errors.append(\"Cost calculation inconsistency\")\n        \n\n        optimal_cost = reference_solution[\"total_cost\"]\n        if optimal_cost == 0:\n            optimality_score = 1.0 if total_cost == 0 else 0.0\n        else:\n            gap = abs(optimal_cost - calculated_cost) / abs(optimal_cost)\n            optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

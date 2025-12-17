@@ -1,0 +1,36 @@
+{
+  "problem_id": "minimum_cost_maximum_flow_001",
+  "metadata": {
+    "problem_type": "Minimum Cost Maximum Flow Problem",
+    "difficulty": "simple"
+  },
+  "problem_description": "A regional power company operates a distribution network with 1 power plant, 8 intermediate substations, and 1 consumer area, all connected by 15 transmission lines with specific power capacity limits and transmission costs. The power distribution system consists of three layers: the power plant layer connects to primary distribution substations, the middle layer provides regional routing through intermediate substations, and the final layer delivers power to the consumer area. Each transmission line has a maximum capacity in megawatts and a transmission cost in dollars per megawatt-hour. Power flow must be conserved at each intermediate substation, meaning the total incoming power equals the total outgoing power. No transmission line can carry more power than its capacity limit, and all power flows are unidirectional as specified. The power system operator needs to determine how to optimize electricity delivery from the main power plant to the consumer area by sending as much power as possible while keeping transmission costs as low as possible. The complete power system details are as follows: From Power Plant: to Substation A with capacity 10 MW and cost $2 per MWh; to Substation B with capacity 8 MW and cost $3 per MWh. From Substation A: to Substation C with capacity 5 MW and cost $1 per MWh; to Substation D with capacity 7 MW and cost $2 per MWh. From Substation B: to Substation D with capacity 6 MW and cost $4 per MWh; to Substation E with capacity 9 MW and cost $2 per MWh. From Substation C: to Substation F with capacity 8 MW and cost $3 per MWh. From Substation D: to Substation F with capacity 4 MW and cost $5 per MWh; to Substation G with capacity 10 MW and cost $1 per MWh. From Substation E: to Substation G with capacity 7 MW and cost $3 per MWh; to Substation H with capacity 5 MW and cost $2 per MWh. From Substation F: to Consumer Area with capacity 12 MW and cost $2 per MWh. From Substation G: to Consumer Area with capacity 9 MW and cost $4 per MWh. From Substation H: to Substation G with capacity 6 MW and cost $1 per MWh; to Consumer Area with capacity 8 MW and cost $3 per MWh.",
+  "solution_format_description": "Print the following fields: - max_power: maximum power flow from plant to consumer. - total_cost: total transmission cost. - power_allocation: for each transmission line, list power amount with from node, to node, power amount.",  
+  "structured_data": {
+    "num_stations": 10,
+    "transmission_lines": [
+      [0, 1, 10, 2],
+      [0, 2, 8, 3],
+      [1, 3, 5, 1],
+      [1, 4, 7, 2],
+      [2, 4, 6, 4],
+      [2, 5, 9, 2],
+      [3, 6, 8, 3],
+      [4, 6, 4, 5],
+      [4, 7, 10, 1],
+      [5, 7, 7, 3],
+      [6, 9, 12, 2],
+      [7, 9, 9, 4],
+      [5, 8, 5, 2],
+      [8, 7, 6, 1],
+      [8, 9, 8, 3]
+    ]
+  },
+  "reference_solution": {
+    "max_power": 18,
+    "total_cost": 171,
+    "power_allocation": [[0, 1, 10], [0, 2, 8], [1, 3, 5], [1, 4, 5], [2, 4, 3], [2, 5, 5], [3, 6, 5], [4, 7, 8], [5, 8, 5], [6, 9, 5], [7, 9, 8], [8, 9, 5]]
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"max_power\", \"total_cost\", \"power_allocation\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        max_power = solution[\"max_power\"]\n        total_cost = solution[\"total_cost\"]\n        power_allocation = solution[\"power_allocation\"]\n        power_lines = structured_data[\"transmission_lines\"]\n        num_stations = structured_data[\"num_stations\"]\n        source = 0\n        sink = 9\n        \n        errors = []\n        \n        capacity = [[0] * num_stations for _ in range(num_stations)]\n        cost = [[0] * num_stations for _ in range(num_stations)]\n        for from_node, to_node, cap, c in power_lines:\n            capacity[from_node][to_node] = cap\n            cost[from_node][to_node] = c\n        \n        inflow = [0] * num_stations\n        outflow = [0] * num_stations\n        actual_cost = 0\n        \n        for power_item in power_allocation:\n            from_node, to_node, power_amount = power_item\n            \n            if power_amount > capacity[from_node][to_node]:\n                errors.append(f\"Power {power_amount} exceeds capacity {capacity[from_node][to_node]} on line {from_node}->{to_node}\")\n            \n            if power_amount < 0:\n                errors.append(f\"Negative power {power_amount} on line {from_node}->{to_node}\")\n            \n            outflow[from_node] += power_amount\n            inflow[to_node] += power_amount\n            actual_cost += power_amount * cost[from_node][to_node]\n        \n        if outflow[source] != max_power:\n            errors.append(f\"Power plant outflow {outflow[source]} != max_power {max_power}\")\n        \n        if inflow[sink] != max_power:\n            errors.append(f\"Consumer area inflow {inflow[sink]} != max_power {max_power}\")\n        \n        for i in range(num_stations):\n            if i != source and i != sink:\n                if abs(inflow[i] - outflow[i]) > 1e-6:\n                    errors.append(f\"Flow conservation violation at node {i}: inflow {inflow[i]} != outflow {outflow[i]}\")\n        \n        if abs(actual_cost - total_cost) > 1e-6:\n            errors.append(f\"Cost calculation error: actual {actual_cost} != declared {total_cost}\")\n        \n        is_valid = len(errors) == 0\n        \n        if not is_valid:\n            return {\"is_valid\": False, \"validation_errors\": errors, \"optimality_score\": 0.0}\n        \n        optimal_power = reference_solution[\"max_power\"]\n        optimal_cost = reference_solution[\"total_cost\"]\n        \n        if max_power != optimal_power:\n            gap = abs(optimal_power - max_power) / abs(optimal_power)\n            flow_score = max(0, 1 - gap)\n        else:\n            flow_score = 1.0\n        \n        if optimal_cost == 0:\n            cost_score = 1.0 if total_cost == 0 else 0.0\n        else:\n            gap = abs(optimal_cost - total_cost) / abs(optimal_cost)\n            cost_score = max(0, 1 - gap)\n        \n        optimality_score = 0.7 * flow_score + 0.3 * cost_score\n        \n        return {\n            \"is_valid\": is_valid,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

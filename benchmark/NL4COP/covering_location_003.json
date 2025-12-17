@@ -1,0 +1,61 @@
+{
+  "problem_id": "covering_location_003",
+  "metadata": {
+    "problem_type": "Covering Location Problem",
+    "difficulty": "hard"
+  },
+  "problem_description": "A telecommunications company is planning to deploy 5G base stations to provide high-speed internet coverage to 40 rural communities across a mountainous region. The challenging terrain makes it difficult to provide reliable internet access, and the company needs to strategically place base stations to maximize the number of residents with access to 5G services. Each base station can provide coverage to communities within a 25-kilometer radius, but due to the high cost of infrastructure and equipment in remote areas, the company can install at most 7 base stations. A community is considered to have 5G coverage if it has at least one base station within the 25-kilometer service radius. The communities are distributed across the mountainous terrain with the following coordinates (in kilometers from a reference point) and populations: Town 0 at (15.7, 59.8) with 3,700 residents, Town 1 at (88.4, 59.5) with 4,200 residents, Town 2 at (12.8, 82.6) with 15,200 residents, Town 3 at (73.0, 74.7) with 2,800 residents, Town 4 at (37.6, 32.6) with 10,100 residents, Town 5 at (73.3, 55.2) with 5,600 residents, Town 6 at (5.3, 94.3) with 3,700 residents, Town 7 at (82.3, 19.3) with 1,600 residents, Town 8 at (69.6, 96.8) with 4,100 residents, Town 9 at (13.9, 23.9) with 18,500 residents, Town 10 at (34.1, 30.8) with 2,000 residents, Town 11 at (64.7, 93.1) with 16,100 residents, Town 12 at (102.6, 59.3) with 13,500 residents, Town 13 at (12.5, 67.4) with 10,200 residents, Town 14 at (111.8, 103.9) with 6,700 residents, Town 15 at (112.9, 69.5) with 1,800 residents, Town 16 at (86.5, 110.0) with 12,600 residents, Town 17 at (104.5, 111.6) with 18,600 residents, Town 18 at (90.9, 81.7) with 14,500 residents, Town 19 at (11.5, 42.1) with 20,000 residents, Town 20 at (21.9, 104.7) with 18,300 residents, Town 21 at (58.6, 39.8) with 10,000 residents, Town 22 at (74.0, 85.1) with 3,300 residents, Town 23 at (98.5, 84.3) with 16,100 residents, Town 24 at (73.8, 8.3) with 6,300 residents, Town 25 at (23.0, 79.4) with 1,800 residents, Town 26 at (77.0, 51.9) with 11,800 residents, Town 27 at (113.9, 107.6) with 20,000 residents, Town 28 at (17.2, 63.9) with 14,100 residents, Town 29 at (52.7, 104.0) with 6,000 residents, Town 30 at (36.4, 114.8) with 12,800 residents, Town 31 at (82.5, 99.4) with 2,600 residents, Town 32 at (7.0, 32.5) with 13,100 residents, Town 33 at (44.5, 9.3) with 8,000 residents, Town 34 at (77.0, 60.6) with 12,600 residents, Town 35 at (91.0, 5.0) with 4,200 residents, Town 36 at (17.8, 109.5) with 10,500 residents, Town 37 at (23.1, 21.9) with 12,500 residents, Town 38 at (6.7, 114.7) with 11,100 residents, and Town 39 at (20.0, 87.7) with 2,200 residents.",
+  "solution_format_description": "Print the following fields: - selected_base_stations: communities chosen for base stations. - total_covered_population: total population covered by base stations.",
+  "structured_data": {
+    "communities": [
+      [15.7, 59.8, 3700],
+      [88.4, 59.5, 4200],
+      [12.8, 82.6, 15200],
+      [73.0, 74.7, 2800],
+      [37.6, 32.6, 10100],
+      [73.3, 55.2, 5600],
+      [5.3, 94.3, 3700],
+      [82.3, 19.3, 1600],
+      [69.6, 96.8, 4100],
+      [13.9, 23.9, 18500],
+      [34.1, 30.8, 2000],
+      [64.7, 93.1, 16100],
+      [102.6, 59.3, 13500],
+      [12.5, 67.4, 10200],
+      [111.8, 103.9, 6700],
+      [112.9, 69.5, 1800],
+      [86.5, 110.0, 12600],
+      [104.5, 111.6, 18600],
+      [90.9, 81.7, 14500],
+      [11.5, 42.1, 20000],
+      [21.9, 104.7, 18300],
+      [58.6, 39.8, 10000],
+      [74.0, 85.1, 3300],
+      [98.5, 84.3, 16100],
+      [73.8, 8.3, 6300],
+      [23.0, 79.4, 1800],
+      [77.0, 51.9, 11800],
+      [113.9, 107.6, 20000],
+      [17.2, 63.9, 14100],
+      [52.7, 104.0, 6000],
+      [36.4, 114.8, 12800],
+      [82.5, 99.4, 2600],
+      [7.0, 32.5, 13100],
+      [44.5, 9.3, 8000],
+      [77.0, 60.6, 12600],
+      [91.0, 5.0, 4200],
+      [17.8, 109.5, 10500],
+      [23.1, 21.9, 12500],
+      [6.7, 114.7, 11100],
+      [20.0, 87.7, 2200]
+    ],
+    "service_radius": 25,
+    "max_base_stations": 7
+  },
+  "reference_solution": {
+    "selected_base_stations": [1, 7, 8, 14, 20, 25, 37],
+    "total_covered_population": 371000
+  },
+  "solver_code": "",
+  "evaluation_function": "def evaluate(candidate_solution, structured_data, reference_solution):\n    import json\n    \n    try:\n        solution = json.loads(candidate_solution) if isinstance(candidate_solution, str) else candidate_solution\n    except:\n        return {\"is_valid\": False, \"validation_errors\": [\"Invalid JSON format\"], \"optimality_score\": 0.0}\n    \n    required_fields = [\"selected_base_stations\", \"total_covered_population\"]\n    missing = [f for f in required_fields if solution is None or f not in solution]\n    if missing:\n        return {\"is_valid\": False, \"validation_errors\": [f\"Missing fields: {missing}\"], \"optimality_score\": 0.0}\n    \n    try:\n        selected_base_stations = solution[\"selected_base_stations\"]\n        total_covered_population = solution[\"total_covered_population\"]\n        communities = structured_data[\"communities\"]\n        service_radius = structured_data[\"service_radius\"]\n        max_base_stations = structured_data[\"max_base_stations\"]\n        errors = []\n        \n        if len(selected_base_stations) != max_base_stations:\n            errors.append(f\"Selected base stations count mismatch: expected {max_base_stations}, got {len(selected_base_stations)}\")\n        \n        for idx in selected_base_stations:\n            if idx < 0 or idx >= len(communities):\n                errors.append(f\"Invalid community index: {idx}\")\n        \n        if len(selected_base_stations) != len(set(selected_base_stations)):\n            errors.append(\"Duplicate community indices in selection\")\n        \n        total_calculated_population = 0\n        calculated_covered = set()\n        \n        for j in range(len(communities)):\n            is_covered = False\n            for station_idx in selected_base_stations:\n                x1, y1, _ = communities[station_idx]\n                x2, y2, _ = communities[j]\n                distance = ((x1-x2)**2 + (y1-y2)**2)**0.5\n                \n                if distance <= service_radius:\n                    is_covered = True\n                    calculated_covered.add(j)\n                    break\n            \n            if is_covered:\n                total_calculated_population += communities[j][2]\n        \n        if abs(total_calculated_population - total_covered_population) > 1e-6:\n            errors.append(f\"Population calculation mismatch: calculated {total_calculated_population}, declared {total_covered_population}\")\n        \n        if len(errors) > 0:\n            optimality_score = 0.0\n        else:\n            optimal_population = reference_solution[\"total_covered_population\"]\n            if optimal_population == 0:\n                optimality_score = 1.0 if total_covered_population == 0 else 0.0\n            else:\n                gap = abs(optimal_population - total_covered_population) / abs(optimal_population)\n                optimality_score = max(0, 1 - gap)\n        \n        return {\n            \"is_valid\": len(errors) == 0,\n            \"validation_errors\": errors,\n            \"optimality_score\": optimality_score\n        }\n        \n    except Exception as e:\n        return {\"is_valid\": False, \"validation_errors\": [\"Format error in solution data\"], \"optimality_score\": 0.0}"
+}

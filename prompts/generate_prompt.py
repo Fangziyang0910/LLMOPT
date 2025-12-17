@@ -56,9 +56,11 @@ Here is the problem:
 
 
 
-def Q2F(ques):
+def Q2F(ques, feedback=None):
     ques = bound_symbol + ques + bound_symbol
-    return five_description_complex + ques_description_five + ques + five_suffix
+    feedback = (feedback or "").strip()
+    feedback_block = ("\n\n" + feedback + "\n\n") if feedback else ""
+    return five_description_complex + ques_description_five + ques + feedback_block + five_suffix
 
 
 def Q2C(ques):
@@ -72,6 +74,8 @@ def QF2C(ques, five):
     return ques_description + ques_description_code + ques + five_description_code + five + code_suffix
 
 
-def F2C(five):
+def F2C(five, feedback=None):
     five = bound_symbol + five + bound_symbol
-    return five_description_simple + five_description_code + five + code_suffix
+    feedback = (feedback or "").strip()
+    feedback_block = ("\n\n" + feedback + "\n\n") if feedback else ""
+    return five_description_simple + five_description_code + five + feedback_block + code_suffix
